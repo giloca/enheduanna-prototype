@@ -623,7 +623,7 @@ function importEstado(file) {
 // ============================================================
 async function uploadToDrive(file, tileId) {
     try {
-        // URL do proxy + URL do teu script (CORRETA, termina em Z)
+        // URL do proxy + URL do teu script (CORRETA)
         const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
         const scriptUrl = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
         const url = proxyUrl + scriptUrl;
@@ -639,7 +639,7 @@ async function uploadToDrive(file, tileId) {
             reader.readAsDataURL(file);
         });
 
-        // Prepara os dados como JSON (o script espera JSON)
+        // Prepara os dados como JSON
         const payload = {
             filename: file.name,
             filetype: file.type,
@@ -682,7 +682,6 @@ async function uploadToDrive(file, tileId) {
             throw new Error('Tile não encontrada.');
         }
 
-        // Atualiza o tile com os dados do ficheiro
         tile.fileUrl = result.fileUrl;
         tile.fileName = result.fileName || file.name;
         tile.fileType = result.fileType || file.type;
