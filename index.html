@@ -618,49 +618,99 @@ function importEstado(file) {
 // ============================================================
 //  SISTEMA DE VERSÕES NO GOOGLE DRIVE (simplificado)
 // ============================================================
-async function saveVersionToDrive(description) {
-    if (tiles.length === 0) {
-        alert('❌ O mosaico está vazio.');
-        return;
-    }
-    const versionName = `versao_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
-    const versionData = {
-        id: versionName,
-        timestamp: new Date().toISOString(),
-        description: description || 'Sem descrição',
-        tiles: tiles
-    };
+// ============================================================
+//  FUNÇÃO DE UPLOAD PARA O GOOGLE DRIVE (com proxy CORS)
+// ============================================================
+async function uploadToDrive(file, tileId) {
     try {
-        // Usar o mesmo método URL-encoded para guardar versões
-        const payload = new URLSearchParams();
-        payload.append('filename', versionName);
-        payload.append('filetype', 'application/json');
-        payload.append('filedata', btoa(unescape(encodeURIComponent(JSON.stringify(versionData)))));
+        // URL do proxy + URL do teu script (CORRETA, termina em Z)
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
+        const url = proxyUrl + scriptUrl;
 
-        const response = await fetch(UPLOAD_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: payload.toString()
+        console.log('📤 URL do upload (com proxy):', url);
+        console.log('📄 Ficheiro:', file.name, file.size, file.type);
+
+        // Converte o ficheiro para Base64
+        const reader = new FileReader();
+        const base64 = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const result = await response.json();
-        if (result.success) {
-            alert(`✅ Versão "${versionName}" guardada com sucesso!`);
-        } else {
-            throw new Error(result.error || 'Erro ao guardar versão.');
+
+        // Prepara os dados como JSON (o script espera JSON)
+        const payload = {
+            filename: file.name,
+            filetype: file.type,
+            filesize: file.size,
+            filedata: base64,
+            folder: 'assets/images'
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        console.log('📨 Status da resposta:', response.status);
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
         }
+
+        const result = await response.json();
+        console.log('📦 Resposta do servidor:', result);
+
+        if (!result || typeof result !== 'object') {
+            throw new Error('Resposta inválida do servidor.');
+        }
+
+        if (!result.success) {
+            throw new Error(result.error || 'Erro no servidor.');
+        }
+
+        if (!result.fileUrl) {
+            throw new Error('Resposta do servidor não contém fileUrl.');
+        }
+
+        const tile = tiles.find(t => t.id === tileId);
+        if (!tile) {
+            throw new Error('Tile não encontrada.');
+        }
+
+        // Atualiza o tile com os dados do ficheiro
+        tile.fileUrl = result.fileUrl;
+        tile.fileName = result.fileName || file.name;
+        tile.fileType = result.fileType || file.type;
+        tile.fileId = result.fileId;
+
+        const fileType = tile.fileType;
+        if (fileType.startsWith('image/')) {
+            tile.type = 'imagem';
+        } else if (fileType.startsWith('audio/')) {
+            tile.type = 'audio';
+        } else if (fileType.startsWith('video/')) {
+            tile.type = 'video';
+        } else if (fileType === 'application/pdf') {
+            tile.type = 'pdf';
+        } else {
+            tile.type = 'texto';
+        }
+
+        saveToLocalStorage();
+        renderMosaic();
+        alert(`✅ Ficheiro "${tile.fileName}" guardado na Drive!`);
+        return result;
+
     } catch (error) {
-        console.error('❌ Erro ao guardar versão:', error);
-        alert(`❌ Erro ao guardar versão: ${error.message}`);
+        console.error('❌ Erro no upload:', error);
+        alert(`❌ Erro ao enviar ficheiro: ${error.message}`);
+        return null;
     }
-}
-
-async function listVersions() {
-    alert('📋 Funcionalidade de listagem de versões em desenvolvimento.\nPor agora, use o Google Drive para ver os ficheiros JSON guardados.');
-}
-
-async function loadVersionFromDrive(versionId) {
-    alert('🔄 Funcionalidade de restauro de versões em desenvolvimento.\nPor agora, pode importar manualmente o ficheiro JSON usando "Importar JSON".');
 }
 
 // ============================================================
