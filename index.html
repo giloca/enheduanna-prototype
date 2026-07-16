@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enheduanna · Alicatado · Mosaico Intertextual</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background-color: #1a1612;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Alhambra_-_detail_of_wall_tiles.jpg/1280px-Alhambra_-_detail_of_wall_tiles.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #f0ece3;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(212, 175, 106, 0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .header-left h1 { font-family: 'Georgia', serif; font-weight: 400; font-size: 1.8rem; color: #ffecb3; letter-spacing: 2px; }
+        .header-left .sub { font-size: 0.8rem; opacity: 0.7; font-style: italic; }
+        .save-indicator {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            background: #4a7c3a;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-indicator.show { opacity: 1; }
+
+        .agents-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(30, 25, 20, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 40px;
+            padding: 0.6rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #b88b4a;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .agent {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+        .agent:hover { border-color: rgba(212, 175, 106, 0.3); }
+        .agent-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #d4af6a;
+            background: #2a2418;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .agent-avatar:hover { transform: scale(1.05); border-color: #ffecb3; }
+        .agent-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .agent-avatar .placeholder { font-size: 1.4rem; opacity: 0.4; }
+        .agent-info { display: flex; flex-direction: column; }
+        .agent-info .label { font-size: 0.7rem; font-weight: 600; color: #ffecb3; }
+        .agent-info .status { font-size: 0.55rem; opacity: 0.6; }
+        .btn-upload-agent {
+            background: transparent;
+            border: 1px solid #b88b4a;
+            color: #f0ece3;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.5rem;
+            transition: 0.2s;
+            margin-top: 0.1rem;
+        }
+        .btn-upload-agent:hover { background: rgba(212, 175, 106, 0.2); }
+
+        .agent-enheduanna {
+            flex: 1; min-width: 180px;
+            border-left: 1px solid #b88b4a;
+            padding-left: 1rem;
+            border-radius: 0;
+        }
+        .agent-enheduanna .suggestion {
+            background: rgba(212, 175, 106, 0.15);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #ffecb3;
+            border-left: 2px solid #d4af6a;
+            animation: pulse-suggestion 2s infinite;
+        }
+        @keyframes pulse-suggestion {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .mode-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .mode-btn {
+            background: transparent;
+            border: 1px solid #b88b4a;
+            color: #f0ece3;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .mode-btn:hover { background: rgba(212, 175, 106, 0.2); }
+        .mode-btn.active { background: #b88b4a; color: #1a1612; font-weight: 600; }
+
+        .mosaic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tile {
+            background: rgba(30, 25, 20, 0.88);
+            backdrop-filter: blur(3px);
+            border-radius: 16px;
+            padding: 0.8rem 1rem 0.6rem;
+            border-left: 6px solid #d4af6a;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: 0.2s;
+            display: flex; flex-direction: column;
+        }
+        .tile:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .tile.inactive { opacity: 0.4; filter: grayscale(0.6); border-left-color: #555; }
+        .tile.tipo-texto { border-left-color: #4a8fc1; }
+        .tile.tipo-imagem { border-left-color: #4caf50; }
+        .tile.tipo-audio { border-left-color: #ff9800; }
+        .tile.tipo-video { border-left-color: #9c27b0; }
+        .tile.tipo-pdf { border-left-color: #e74c3c; }
+        .tile.is-overlay {
+            border-top: 3px solid #ff9800;
+            background: rgba(255, 152, 0, 0.08);
+        }
+        .tile.highlight {
+            box-shadow: 0 0 20px rgba(212, 175, 106, 0.8) !important;
+            border-color: #ffecb3 !important;
+        }
+
+        .tile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; flex-wrap: wrap; gap:0.2rem; }
+        .tile-type { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
+        .tile-actions-top { display: flex; gap: 0.2rem; flex-wrap: wrap; }
+        .tile-actions-top button {
+            background: transparent; border: none; color: #f0ece3; cursor: pointer;
+            font-size: 0.6rem; opacity: 0.6; transition: 0.2s; padding: 0.1rem 0.3rem;
+        }
+        .tile-actions-top button:hover { opacity: 1; background: rgba(255,255,255,0.05); border-radius: 4px; }
+        .tile-title { font-weight: 600; font-size: 1rem; color: #ffecb3; margin-bottom: 0.3rem; word-break: break-word; }
+        .tile-content {
+            font-size: 0.85rem; line-height: 1.4; color: #e0d6c5;
+            white-space: pre-wrap; word-break: break-word;
+            flex-grow: 1; max-height: 220px; overflow-y: auto; margin-bottom: 0.4rem;
+        }
+        .tile-content img { max-width: 100%; border-radius: 8px; margin: 0.3rem 0; }
+        .tile-content audio { width: 100%; margin: 0.3rem 0; }
+        .tile-content video { max-width: 100%; border-radius: 8px; margin: 0.3rem 0; }
+        .pdf-preview {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,255,255,0.05); padding: 0.4rem;
+            border-radius: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .pdf-preview:hover { background: rgba(255,255,255,0.1); }
+        .btn-expand-text {
+            background: transparent; border: 1px solid #b88b4a; color: #f0ece3;
+            padding: 0.1rem 0.5rem; border-radius: 12px; cursor: pointer;
+            font-size: 0.55rem; transition: 0.2s; margin-top: 0.3rem; align-self: flex-start;
+        }
+        .btn-expand-text:hover { background: rgba(212, 175, 106, 0.2); }
+        .tile-footer {
+            display: flex; flex-wrap: wrap; gap: 0.3rem;
+            border-top: 1px solid rgba(255,215,150,0.15);
+            padding-top: 0.4rem; margin-top: 0.2rem;
+            justify-content: space-between;
+        }
+        .tile-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+        .tile-tags span { background: rgba(212, 175, 106, 0.2); padding: 0.05rem 0.5rem; border-radius: 12px; font-size: 0.6rem; color: #d4af6a; }
+        .tile-actions-bottom { display: flex; gap: 0.2rem; flex-wrap: wrap; }
+        .tile-actions-bottom button {
+            background: transparent; border: 1px solid #b88b4a; color: #f0ece3;
+            padding: 0.15rem 0.5rem; border-radius: 12px; cursor: pointer;
+            font-size: 0.55rem; transition: 0.2s;
+        }
+        .tile-actions-bottom button:hover { background: rgba(212, 175, 106, 0.2); }
+        .btn-upload { background: #4a7c3a !important; border-color: #4a7c3a !important; }
+
+        .tile-messages { margin-top: 0.5rem; border-top: 1px solid rgba(255,215,150,0.15); padding-top: 0.4rem; }
+        .messages-title { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; margin-bottom: 0.3rem; }
+        .message-item {
+            display: flex; align-items: center; gap: 0.4rem;
+            background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem;
+            border-radius: 12px; font-size: 0.65rem; margin-bottom: 0.2rem;
+        }
+        .message-item .message-time { font-size: 0.5rem; opacity: 0.4; margin-left: auto; }
+        .message-item .btn-delete-msg {
+            background: transparent; border: none; color: #f0ece3;
+            cursor: pointer; font-size: 0.6rem; opacity: 0.3; transition: 0.2s;
+        }
+        .message-item .btn-delete-msg:hover { opacity: 1; }
+        .tile-message-input { display: flex; gap: 0.3rem; margin-top: 0.3rem; }
+        .tile-message-input input {
+            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,150,0.2);
+            border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.65rem;
+            color: #f0ece3; outline: none;
+        }
+        .tile-message-input input::placeholder { color: rgba(255,255,255,0.3); }
+        .tile-message-input input:focus { border-color: #d4af6a; }
+        .tile-message-input button {
+            background: #4a3724; border: none; color: #f0ece3;
+            padding: 0.2rem 0.6rem; border-radius: 12px; cursor: pointer; font-size: 0.6rem;
+        }
+        .tile-message-input button:hover { background: #6e4f32; }
+
+        .global-actions {
+            display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem; align-items: center;
+        }
+        .global-actions button {
+            background: #4a3724; border: none; color: #f5e6d3;
+            padding: 0.4rem 1rem; border-radius: 30px; cursor: pointer; font-size: 0.75rem; transition: 0.2s;
+        }
+        .global-actions button:hover { background: #6e4f32; transform: scale(1.02); }
+        .global-actions .btn-primary { background: #b88b4a; color: #1a1612; font-weight: 600; }
+        .global-actions .btn-primary:hover { background: #d4af6a; }
+        .global-actions .btn-secondary { background: #3a5a7c; }
+        .global-actions .btn-secondary:hover { background: #4a7a9c; }
+        .file-input-hidden { display: none; }
+
+        .modal-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
+            z-index: 1000; padding: 1rem;
+        }
+        .modal-card {
+            background: #2c241a; padding: 1.5rem; border-radius: 24px;
+            width: 100%; max-width: 550px; border: 1px solid #ca9e5c;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-card h3 { color: #ffecb3; margin-bottom: 1rem; }
+        .modal-card input, .modal-card textarea, .modal-card select {
+            width: 100%; background: #1f1a14; border: 1px solid #b88b4a; color: #f0ece3;
+            padding: 0.6rem; border-radius: 10px; font-family: inherit; font-size: 0.9rem; margin-bottom: 0.8rem;
+        }
+        .modal-card textarea { min-height: 80px; resize: vertical; }
+        .modal-card .expanded-text {
+            white-space: pre-wrap; margin: 1rem 0; max-height: 400px; overflow-y: auto;
+            background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 8px;
+            font-size: 0.9rem; color: #e0d6c5;
+        }
+        .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap; }
+        .modal-actions button { padding: 0.5rem 1.2rem; border: none; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .modal-actions .btn-cancel { background: #4a3724; color: #f0ece3; }
+        .modal-actions .btn-save { background: #b88b4a; color: #1a1612; font-weight: 600; }
+        .modal-actions .btn-secondary { background: #3a5a7c; color: #fff; }
+        .modal-actions .btn-secondary:hover { background: #4a7a9c; }
+
+        @media (max-width: 768px) {
+            .header-left h1 { font-size: 1.3rem; }
+            .agents-bar { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            .agent-enheduanna { border-left: none; padding-left: 0; }
+            .mosaic-grid { grid-template-columns: 1fr; }
+        }
+        footer { text-align: center; font-size: 0.7rem; opacity: 0.5; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <div class="header-left">
+            <h1>✨ ENHEDUANNA</h1>
+            <span class="sub">Alicatado · mosaico intertextual</span>
+            <span class="save-indicator" id="saveIndicator">✅ Guardado</span>
+        </div>
+        <div class="header-actions">
+            <button class="mode-btn active" data-mode="alicatado">⚙️ Alicatado</button>
+            <button class="mode-btn" data-mode="caleidoscopio">🌀 Caleidoscópio</button>
+            <button class="mode-btn" data-mode="livre">🖐️ Livre</button>
+        </div>
+    </div>
+
+    <!-- AGENTES -->
+    <div class="agents-bar">
+        <div class="agent" id="agentEnheduanna">
+            <div class="agent-avatar" id="enheduannaAvatar" title="Clique para ativar Enheduanna (mediação)">
+                <img id="enheduannaImg" src="" style="display:none;">
+                <span class="placeholder" id="enheduannaPlaceholder">📜</span>
+            </div>
+            <div class="agent-info">
+                <div class="label">Enheduanna · Mediadora</div>
+                <div class="status" id="enheduannaStatus">a tecer conexões</div>
+                <button class="btn-upload-agent" data-agent="enheduanna">📷 Carregar</button>
+            </div>
+        </div>
+
+        <div class="agent" id="agentWanderer">
+            <div class="agent-avatar" id="wandererAvatar" title="Clique para ativar Wanderer (caminhante)">
+                <img id="wandererImg" src="" style="display:none;">
+                <span class="placeholder" id="wandererPlaceholder">🚶</span>
+            </div>
+            <div class="agent-info">
+                <div class="label">Wanderer · Caminhante</div>
+                <div class="status" id="wandererStatus">percorrendo o mosaico</div>
+                <button class="btn-upload-agent" data-agent="wanderer">📷 Carregar</button>
+            </div>
+        </div>
+
+        <div class="agent" id="agentOgum">
+            <div class="agent-avatar" id="ogumAvatar" title="Clique para ativar Ogum (inventor)">
+                <img id="ogumImg" src="" style="display:none;">
+                <span class="placeholder" id="ogumPlaceholder">⚔️</span>
+            </div>
+            <div class="agent-info">
+                <div class="label">Ogum · Inventor</div>
+                <div class="status" id="ogumStatus">ferramentas e prompts</div>
+                <button class="btn-upload-agent" data-agent="ogum">📷 Carregar</button>
+            </div>
+        </div>
+
+        <div class="agent agent-enheduanna">
+            <div class="suggestion" id="suggestionText">💡 "Ligue 'Metal fundente' à cena da praia?"</div>
+        </div>
+    </div>
+
+    <!-- MOSAICO -->
+    <div id="mosaic" class="mosaic-grid"></div>
+
+    <!-- AÇÕES -->
+    <div class="global-actions">
+        <button id="btnAddTile" class="btn-primary">➕ Novo azulejo</button>
+        <button id="btnReset">⟳ Restaurar</button>
+        <button id="btnNewMosaic">🔄 Novo mosaico</button>
+        <button id="btnRecover" class="btn-secondary">↩️ Recuperar anterior</button>
+        <button id="btnToggleInactive">👁️ Inativos</button>
+        <button id="btnExport" class="btn-primary">📤 Exportar JSON</button>
+        <button id="btnImport" class="btn-secondary">📥 Importar JSON</button>
+        <input type="file" id="fileInputImport" class="file-input-hidden" accept=".json">
+        <button id="btnSaveVersion" class="btn-primary">💾 Guardar versão</button>
+        <button id="btnListVersions" class="btn-secondary">📋 Versões</button>
+        <button id="btnShare" class="btn-primary">📨 Partilhar</button>
+    </div>
+
+    <footer>Enheduanna · Alicatado · 2026 · Clique nos agentes para ativar funções</footer>
+</div>
+
+<script>
+// ============================================================
+//  MATRIZ INICIAL
+// ============================================================
+const INITIAL_TILES = [
+    { id: 't1', title: '🌊 Metal fundente & hélices', content: 'Entre nós e as palavras há metal fundente\nentre nós e as palavras há hélices que andam', type: 'texto', tags: ['Cesariny','metal'], messages: [] },
+    { id: 't2', title: '🏛️ Muralha que habitamos', content: 'Ao longo da muralha que habitamos\nhá palavras de vida há palavras de morte', type: 'texto', tags: ['Cesariny','muralha'], messages: [] },
+    { id: 't3', title: '🤲 Mãos de Elsinore', content: 'Entre nós e as palavras, surdamente,\nas mãos e as paredes de Elsinore', type: 'texto', tags: ['Cesariny','Elsinore'], messages: [] },
+    { id: 't4', title: '💎 Palavras diamantes', content: 'E há palavras e noturnas palavras gemidos\npalavras diamantes palavras nunca escritas', type: 'texto', tags: ['Cesariny','diamantes'], messages: [] },
+    { id: 't5', title: '⚔️ Nosso dever falar', content: 'Entre nós e as palavras, os emparedados\ne entre nós e as palavras, o nosso dever falar', type: 'texto', tags: ['Cesariny','dever'], messages: [] },
+    { id: 't6', title: '🌰 Castanha · Lorca · Alhambra', content: 'azulejos do Infinito\nme levam por linhas e formas\nao ponto\naí encontro este sabor sublime\no gosto da castanha', type: 'texto', tags: ['castanha','Lorca','Alhambra'], messages: [] },
+    { id: 't7', title: '📖 Escadas da casa não tomada', content: 'E na bibliografia daquele que gostaria de nunca lembrar está que ainda vive na casa.\nAs escadas permanecem, são atuais.', type: 'texto', tags: ['Cortázar','escadas'], messages: [] },
+    { id: 't8', title: '💌 Widmung (TK)', content: 'Du verstehst es nicht, oder, und vielleicht erkläre ich es dir auch gar nicht ganz...', type: 'texto', tags: ['Widmung','alemão'], messages: [] },
+];
+
+// ============================================================
+//  ESTADO
+// ============================================================
+let tiles = [];
+let showInactive = true;
+let agentImages = { enheduanna: '', wanderer: '', ogum: '' };
+
+// ============================================================
+//  CONFIGURAÇÃO DO UPLOAD PARA O GOOGLE DRIVE
+// ============================================================
+const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
+// ============================================================
+//  PERSISTÊNCIA (localStorage)
+// ============================================================
+function showSaved() {
+    const el = document.getElementById('saveIndicator');
+    if (!el) return;
+    el.classList.add('show');
+    clearTimeout(el._timeout);
+    el._timeout = setTimeout(() => el.classList.remove('show'), 2000);
+}
+function saveToLocalStorage() {
+    try {
+        localStorage.setItem('enheduanna_mosaic', JSON.stringify(tiles));
+        localStorage.setItem('enheduanna_agents', JSON.stringify(agentImages));
+        showSaved();
+    } catch(e) {
+        console.warn('Erro ao guardar:', e);
+    }
+}
+
+const result = await response.json();
+console.log('📦 Resposta do servidor (detalhada):', JSON.stringify(result, null, 2));
+
+function loadFromLocalStorage() {
+    const stored = localStorage.getItem('enheduanna_mosaic');
+    if (stored) {
+        try {
+            tiles = JSON.parse(stored);
+            tiles.forEach(t => { if (!t.messages) t.messages = []; });
+            return true;
+        } catch(e) {}
+    }
+    return false;
+}
+
+// ============================================================
+//  CARREGAR DADOS DO MOSAICO (do JSON ou localStorage)
+// ============================================================
+function loadMosaic() {
+    if (loadFromLocalStorage()) {
+        renderMosaic();
+        return;
+    }
+    tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
+    saveToLocalStorage();
+    renderMosaic();
+}
+
+// ============================================================
+//  FUNÇÃO DE UPLOAD PARA O GOOGLE DRIVE (CORRIGIDA - URL-encoded)
+// ============================================================
+// ============================================================
+//  ENHEDUANNA UPLOADER - Google Apps Script (Corrigido)
+// ============================================================
+
+// Apenas o ID da pasta (retirado do teu URL)
+  
+// ============================================================
+//  FUNÇÃO DE UPLOAD PARA O GOOGLE DRIVE (com logs e erros)
+// ============================================================
+ 
+async function uploadToDrive(file, tileId) {
+    try {
+        // URL do proxy + URL do seu script
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
+        const url = proxyUrl + scriptUrl;
+
+        console.log('📤 URL do upload (com proxy):', url);
+        console.log('📄 Ficheiro:', file.name, file.size, file.type);
+
+        // Converte o ficheiro para Base64
+        const reader = new FileReader();
+        const base64 = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+
+        // Prepara os dados como URL-encoded
+        const payload = new URLSearchParams();
+        payload.append('filename', file.name);
+        payload.append('filetype', file.type);
+        payload.append('filedata', base64);
+
+        const response = await fetch(url, {
+            method: 'POST',
+            body: payload.toString()
+            // Sem headers - o navegador define automaticamente
+        });
+
+        console.log('📨 Status da resposta:', response.status);
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('📦 Resposta do servidor:', result);
+
+        if (!result || typeof result !== 'object') {
+            throw new Error('Resposta inválida do servidor.');
+        }
+
+        if (!result.success) {
+            throw new Error(result.error || 'Erro no servidor.');
+        }
+
+        if (!result.fileUrl) {
+            throw new Error('Resposta do servidor não contém fileUrl.');
+        }
+
+        const tile = tiles.find(t => t.id === tileId);
+        if (!tile) {
+            throw new Error('Tile não encontrada.');
+        }
+
+        tile.fileUrl = result.fileUrl;
+        tile.fileName = result.fileName || file.name;
+        tile.fileType = result.fileType || file.type;
+        tile.fileId = result.fileId;
+
+        const fileType = tile.fileType;
+        if (fileType.startsWith('image/')) {
+            tile.type = 'imagem';
+        } else if (fileType.startsWith('audio/')) {
+            tile.type = 'audio';
+        } else if (fileType.startsWith('video/')) {
+            tile.type = 'video';
+        } else if (fileType === 'application/pdf') {
+            tile.type = 'pdf';
+        } else {
+            tile.type = 'texto';
+        }
+
+        saveToLocalStorage();
+        renderMosaic();
+        alert(`✅ Ficheiro "${tile.fileName}" guardado na Drive!`);
+        return result;
+
+    } catch (error) {
+        console.error('❌ Erro no upload:', error);
+        alert(`❌ Erro ao enviar ficheiro: ${error.message}`);
+        return null;
+    }
+}/*async function uploadToDrive(file, base64Data) {
+    const url = 'https://script.google.com/macros/s/AKfycbx0w8iWuvyt6qoDhEbL10QgXcXFV-gsclhXsx3wuzSqpIeeYxQsVs57beb8mb0j1ist/exec'; 
+    // Usa o teu URL atualizado aqui
+    
+    // Como o Script espera e.parameter (URL-encoded), usamos URLSearchParams
+    const formData = new URLSearchParams();
+    formData.append('filedata', base64Data.split(',')[1] || base64Data); // Remove o cabeçalho "data:image/png;base64," se existir
+    formData.append('filename', file.name);
+    formData.append('filetype', file.type);
+
+    try {
+        console.log("📤 A enviar para a Google Drive...");
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            console.log("✅ Sucesso!", result);
+            // Aqui podes associar o result.fileUrl à tua Tile ativa no Mosaico!
+            return result.fileUrl;
+        } else {
+            console.error("❌ Erro retornado pelo Google Script:", result.error);
+        }
+    } catch (err) {
+        console.error("❌ Falha crítica no fetch (CORS ou rede):", err);
+    }
+}
+/async function uploadToDrive(file, tileId) {
+    try {
+        console.log('📤 URL do upload:', UPLOAD_URL);
+        console.log('📄 Ficheiro:', file.name, file.size, file.type);
+
+        // Converte o ficheiro para Base64
+        const reader = new FileReader();
+        const base64 = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+
+        // Prepara os dados como URL-encoded (evita CORS preflight)
+        const payload = new URLSearchParams();
+        payload.append('filename', file.name);
+        payload.append('filetype', file.type);
+        payload.append('filesize', file.size);
+        payload.append('filedata', base64);
+
+        const response = await fetch(UPLOAD_URL, {
+    method: 'POST',
+    body: payload.toString()
+    // sem headers, o navegador define automaticamente
+    });
+
+        console.log('📨 Status da resposta:', response.status);
+
+         if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('📦 Resposta do servidor:', result);
+
+        if (!result || typeof result !== 'object') {
+            throw new Error('Resposta inválida do servidor.');
+        }
+
+        if (!result.success) {
+            throw new Error(result.error || 'Erro no servidor.');
+        }
+
+        if (!result.fileUrl) {
+            throw new Error('Resposta do servidor não contém fileUrl.');
+        }
+
+        const tile = tiles.find(t => t.id === tileId);
+        if (!tile) {
+            throw new Error('Tile não encontrada.');
+        }
+
+        tile.fileUrl = result.fileUrl;
+        tile.fileName = result.fileName || file.name;
+        tile.fileType = result.fileType || file.type;
+        tile.fileId = result.fileId;
+
+        const fileType = tile.fileType;
+        if (fileType.startsWith('image/')) {
+            tile.type = 'imagem';
+        } else if (fileType.startsWith('audio/')) {
+            tile.type = 'audio';
+        } else if (fileType.startsWith('video/')) {
+            tile.type = 'video';
+        } else if (fileType === 'application/pdf') {
+            tile.type = 'pdf';
+        } else {
+            tile.type = 'texto';
+        }
+
+        saveToLocalStorage();
+        renderMosaic();
+        alert(`✅ Ficheiro "${tile.fileName}" guardado na Drive!`);
+        return result;
+
+    } catch (error) {
+        console.error('❌ Erro no upload:', error);
+        alert(`❌ Erro ao enviar ficheiro: ${error.message}`);
+        return null;
+    }
+}*/
+
+// ============================================================
+//  EXPORTAR E IMPORTAR JSON (leve, sem Base64)
+// ============================================================
+function exportEstado() {
+    if (tiles.length === 0) {
+        alert('❌ O mosaico está vazio.');
+        return;
+    }
+    const data = { tiles, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `enheduanna_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importEstado(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.tiles && Array.isArray(data.tiles)) {
+                tiles = data.tiles;
+                tiles.forEach(t => { if (!t.messages) t.messages = []; });
+                saveToLocalStorage();
+                renderMosaic();
+                alert('✅ Estado importado com sucesso! ' + tiles.length + ' blocos.');
+            } else {
+                alert('❌ Ficheiro inválido: falta a propriedade "tiles".');
+            }
+        } catch(err) {
+            alert('❌ Erro ao ler o ficheiro: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// ============================================================
+//  SISTEMA DE VERSÕES NO GOOGLE DRIVE (simplificado)
+// ============================================================
+async function saveVersionToDrive(description) {
+    if (tiles.length === 0) {
+        alert('❌ O mosaico está vazio.');
+        return;
+    }
+    const versionName = `versao_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+    const versionData = {
+        id: versionName,
+        timestamp: new Date().toISOString(),
+        description: description || 'Sem descrição',
+        tiles: tiles
+    };
+    try {
+        // Usar o mesmo método URL-encoded para guardar versões
+        const payload = new URLSearchParams();
+        payload.append('filename', versionName);
+        payload.append('filetype', 'application/json');
+        payload.append('filedata', btoa(unescape(encodeURIComponent(JSON.stringify(versionData)))));
+
+        const response = await fetch(UPLOAD_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: payload.toString()
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const result = await response.json();
+        if (result.success) {
+            alert(`✅ Versão "${versionName}" guardada com sucesso!`);
+        } else {
+            throw new Error(result.error || 'Erro ao guardar versão.');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao guardar versão:', error);
+        alert(`❌ Erro ao guardar versão: ${error.message}`);
+    }
+}
+
+async function listVersions() {
+    alert('📋 Funcionalidade de listagem de versões em desenvolvimento.\nPor agora, use o Google Drive para ver os ficheiros JSON guardados.');
+}
+
+async function loadVersionFromDrive(versionId) {
+    alert('🔄 Funcionalidade de restauro de versões em desenvolvimento.\nPor agora, pode importar manualmente o ficheiro JSON usando "Importar JSON".');
+}
+
+// ============================================================
+//  AGENTES - IMAGENS
+// ============================================================
+function applyAgentImages() {
+    const map = {
+        enheduanna: { img: 'enheduannaImg', placeholder: 'enheduannaPlaceholder' },
+        wanderer: { img: 'wandererImg', placeholder: 'wandererPlaceholder' },
+        ogum: { img: 'ogumImg', placeholder: 'ogumPlaceholder' }
+    };
+    Object.keys(map).forEach(key => {
+        const img = document.getElementById(map[key].img);
+        const ph = document.getElementById(map[key].placeholder);
+        if (agentImages[key]) {
+            img.src = agentImages[key];
+            img.style.display = 'block';
+            ph.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+            ph.style.display = 'block';
+        }
+    });
+}
+
+function setupAgentUpload(agentKey) {
+    const btn = document.querySelector(`.btn-upload-agent[data-agent="${agentKey}"]`);
+    if (!btn) return;
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        fileInput.click();
+    });
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            agentImages[agentKey] = ev.target.result;
+            applyAgentImages();
+            saveToLocalStorage();
+        };
+        reader.readAsDataURL(file);
+        fileInput.value = '';
+    });
+}
+
+// ============================================================
+//  CRUD BÁSICO
+// ============================================================
+function generateId() { return Date.now() + '-' + Math.random().toString(36).substr(2, 6); }
+
+function addTile(title='', content='', type='texto', tags=[]) {
+    tiles.push({
+        id: generateId(),
+        title: title.trim() || 'Novo azulejo',
+        content: content.trim() || 'Escreva aqui...',
+        type: type,
+        tags: tags || [],
+        active: true,
+        fileData: null,
+        fileType: null,
+        fileUrl: null,
+        messages: []
+    });
+    saveToLocalStorage(); renderMosaic();
+}
+
+function duplicateTile(id) {
+    const original = tiles.find(t => t.id === id);
+    if (!original) return;
+    tiles.push({
+        id: generateId(),
+        title: original.title + ' (cópia)',
+        content: original.content,
+        type: original.type,
+        tags: [...original.tags],
+        active: true,
+        fileData: null,
+        fileType: original.fileType || null,
+        fileUrl: original.fileUrl || null,
+        messages: []
+    });
+    saveToLocalStorage(); renderMosaic();
+}
+
+function copyTileWithOverlay(id) {
+    const original = tiles.find(t => t.id === id);
+    if (!original) return;
+    tiles.push({
+        id: generateId(),
+        title: original.title + ' (sobre)',
+        content: original.content,
+        type: original.type,
+        tags: [...original.tags],
+        active: true,
+        fileData: null,
+        fileType: original.fileType || null,
+        fileUrl: original.fileUrl || null,
+        messages: [],
+        isOverlay: true,
+        overlayOf: original.id
+    });
+    saveToLocalStorage(); renderMosaic();
+}
+
+function splitTile(id) {
+    const original = tiles.find(t => t.id === id);
+    if (!original) return;
+    const content = original.content || '';
+    const mid = Math.floor(content.length / 2);
+    let splitPos = content.lastIndexOf(' ', mid);
+    if (splitPos === -1) splitPos = mid;
+    const part1 = content.substring(0, splitPos).trim();
+    const part2 = content.substring(splitPos).trim();
+    if (!part1 || !part2) {
+        alert('Conteúdo muito curto para dividir.');
+        return;
+    }
+    tiles = tiles.filter(t => t.id !== id);
+    tiles.push({
+        id: generateId(),
+        title: original.title + ' (1/2)',
+        content: part1,
+        type: original.type,
+        tags: [...original.tags],
+        active: true,
+        fileData: null,
+        fileType: null,
+        fileUrl: original.fileUrl || null,
+        messages: []
+    });
+    tiles.push({
+        id: generateId(),
+        title: original.title + ' (2/2)',
+        content: part2,
+        type: original.type,
+        tags: [...original.tags],
+        active: true,
+        fileData: null,
+        fileType: null,
+        fileUrl: original.fileUrl || null,
+        messages: []
+    });
+    saveToLocalStorage(); renderMosaic();
+}
+
+function deleteTile(id) {
+    if (!confirm('Remover este azulejo?')) return;
+    tiles = tiles.filter(t => t.id !== id);
+    saveToLocalStorage(); renderMosaic();
+}
+
+function toggleActive(id) {
+    const tile = tiles.find(t => t.id === id);
+    if (tile) { tile.active = !tile.active; saveToLocalStorage(); renderMosaic(); }
+}
+
+function editTile(id, newTitle, newContent, newType, newTags) {
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    if (newTitle !== undefined) tile.title = newTitle;
+    if (newContent !== undefined) tile.content = newContent;
+    if (newType !== undefined) tile.type = newType;
+    if (newTags !== undefined) tile.tags = newTags;
+    saveToLocalStorage();
+    renderMosaic();
+}
+
+// ============================================================
+//  MENSAGENS
+// ============================================================
+function addMessageToTile(id, message) {
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    if (!tile.messages) tile.messages = [];
+    tile.messages.push({ id: Date.now()+'-'+Math.random().toString(36).substr(2,4), text: message.trim(), timestamp: new Date().toLocaleString() });
+    saveToLocalStorage(); renderMosaic();
+}
+
+function deleteMessageFromTile(tileId, msgId) {
+    const tile = tiles.find(t => t.id === tileId);
+    if (!tile || !tile.messages) return;
+    tile.messages = tile.messages.filter(m => m.id !== msgId);
+    saveToLocalStorage(); renderMosaic();
+}
+
+// ============================================================
+//  EXPANDIR TEXTO
+// ============================================================
+function expandText(id) {
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+        <div class="modal-card" style="max-width:600px;">
+            <h3>${escapeHtml(tile.title)}</h3>
+            <div class="expanded-text">${escapeHtml(tile.content)}</div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modalClose">Fechar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector('#modalClose').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
+
+// ============================================================
+//  AGENTES - AÇÕES
+// ============================================================
+function findActiveTile() {
+    const editing = document.querySelector('.tile.editing');
+    if (editing) {
+        const id = editing.dataset.id;
+        return tiles.find(t => t.id === id);
+    }
+    return tiles.length > 0 ? tiles[tiles.length-1] : null;
+}
+
+function highlightTile(id) {
+    document.querySelectorAll('.tile.highlight').forEach(el => el.classList.remove('highlight'));
+    document.querySelectorAll('.tile').forEach(el => {
+        if (el.dataset.id === id) {
+            el.classList.add('highlight');
+            el.style.boxShadow = '0 0 20px rgba(212,175,106,0.8)';
+            el.style.borderColor = '#ffecb3';
+        }
+    });
+    setTimeout(() => {
+        document.querySelectorAll('.tile.highlight').forEach(el => {
+            el.classList.remove('highlight');
+            el.style.boxShadow = '';
+            el.style.borderColor = '';
+        });
+    }, 5000);
+}
+
+function generateSuggestions(tile) {
+    const tags = tile.tags || [];
+    const content = tile.content || '';
+    const suggestions = [
+        `"${tile.title}" pode ligar-se a um bloco sobre exílio.`,
+        `Este bloco contém "${content.substring(0,30)}..." — talvez ligue a uma imagem.`,
+        `Que tal gerar um mini-resumo sobre "${tile.title}"?`,
+        `A palavra "${tags[0] || 'conceito'}" aparece noutros blocos.`,
+        `Este bloco poderia beneficiar de uma paisagem sonora.`,
+    ];
+    return suggestions[Math.floor(Math.random() * suggestions.length)];
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function renderMosaic() {
+    const container = document.getElementById('mosaic');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const visible = tiles.filter(t => showInactive || t.active !== false);
+    visible.forEach(tile => {
+        const div = document.createElement('div');
+        div.className = `tile tipo-${tile.type}`;
+        if (tile.active === false) div.classList.add('inactive');
+        if (tile.isOverlay) div.classList.add('is-overlay');
+        div.dataset.id = tile.id;
+
+        const tagsHtml = (tile.tags||[]).map(t => `<span>#${t}</span>`).join('');
+
+        let contentHtml = '';
+        if (tile.fileUrl) {
+            const fileType = tile.fileType || 'image';
+            if (fileType.startsWith('image/') || fileType === 'image') {
+                contentHtml = `<img src="${tile.fileUrl}" alt="${escapeHtml(tile.title)}" style="max-width:100%;border-radius:8px;">`;
+            } else if (fileType.startsWith('audio/') || fileType === 'audio') {
+                contentHtml = `<audio controls src="${tile.fileUrl}"></audio>`;
+            } else if (fileType.startsWith('video/') || fileType === 'video') {
+                contentHtml = `<video controls src="${tile.fileUrl}" style="max-width:100%;border-radius:8px;"></video>`;
+            } else if (fileType === 'application/pdf' || fileType === 'pdf') {
+                contentHtml = `<div class="pdf-preview" data-id="${tile.id}"><span style="font-size:1.5rem;">📄</span><span>${escapeHtml(tile.fileName || tile.content)}</span><span style="font-size:0.6rem;opacity:0.5;">(clique para abrir)</span></div>`;
+            }
+        } else if (tile.fileData) {
+            if (tile.fileType === 'image') {
+                contentHtml = `<img src="${tile.fileData}" alt="${escapeHtml(tile.title)}">`;
+            } else if (tile.fileType === 'audio') {
+                contentHtml = `<audio controls src="${tile.fileData}"></audio>`;
+            } else if (tile.fileType === 'video') {
+                contentHtml = `<video controls src="${tile.fileData}" style="max-width:100%;border-radius:8px;"></video>`;
+            } else if (tile.fileType === 'pdf') {
+                contentHtml = `<div class="pdf-preview" data-id="${tile.id}"><span style="font-size:1.5rem;">📄</span><span>${escapeHtml(tile.content)}</span><span style="font-size:0.6rem;opacity:0.5;">(clique para abrir)</span></div>`;
+            }
+        } else {
+            contentHtml = escapeHtml(tile.content).replace(/\n/g, '<br>');
+            if (tile.content && tile.content.length > 200) {
+                contentHtml += `<button class="btn-expand-text" data-id="${tile.id}">📖 Expandir</button>`;
+            }
+        }
+
+        let msgsHtml = '';
+        if (tile.messages && tile.messages.length > 0) {
+            msgsHtml = `<div class="tile-messages"><div class="messages-title">💬 ${tile.messages.length} msg(s)</div>`;
+            tile.messages.forEach(msg => {
+                msgsHtml += `<div class="message-item"><span>${escapeHtml(msg.text)}</span><span class="message-time">${msg.timestamp}</span><button class="btn-delete-msg" data-tile="${tile.id}" data-msg="${msg.id}">✕</button></div>`;
+            });
+            msgsHtml += `</div>`;
+        }
+
+        div.innerHTML = `
+            <div class="tile-header">
+                <span class="tile-type">${tile.type}${tile.isOverlay ? ' · sobre' : ''}</span>
+                <div class="tile-actions-top">
+                    <button class="btn-copy-overlay" data-id="${tile.id}" title="Copiar sobre">📋 Sob</button>
+                    <button class="btn-split" data-id="${tile.id}" title="Subdividir">✂️ Div</button>
+                    <button class="btn-duplicate" data-id="${tile.id}">🔄</button>
+                    <button class="btn-edit" data-id="${tile.id}">✏️</button>
+                    <button class="btn-toggle" data-id="${tile.id}">${tile.active !== false ? '🔆' : '🌙'}</button>
+                    <button class="btn-delete" data-id="${tile.id}">🗑️</button>
+                </div>
+            </div>
+            <div class="tile-title">${escapeHtml(tile.title)}</div>
+            <div class="tile-content">${contentHtml}</div>
+            ${msgsHtml}
+            <div class="tile-message-input">
+                <input type="text" class="msg-input" data-id="${tile.id}" placeholder="Comentário..." />
+                <button class="btn-send-msg" data-id="${tile.id}">Enviar</button>
+            </div>
+            <div class="tile-footer">
+                <div class="tile-tags">${tagsHtml}</div>
+                <div class="tile-actions-bottom">
+                    <button class="btn-upload" data-id="${tile.id}">📎 Upload</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    // Eventos
+    document.querySelectorAll('.btn-duplicate').forEach(b => b.addEventListener('click', function() { duplicateTile(this.dataset.id); }));
+    document.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', function() { openEditModal(this.dataset.id); }));
+    document.querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', function() { deleteTile(this.dataset.id); }));
+    document.querySelectorAll('.btn-toggle').forEach(b => b.addEventListener('click', function() { toggleActive(this.dataset.id); }));
+    document.querySelectorAll('.btn-copy-overlay').forEach(b => b.addEventListener('click', function() { copyTileWithOverlay(this.dataset.id); }));
+    document.querySelectorAll('.btn-split').forEach(b => b.addEventListener('click', function() { splitTile(this.dataset.id); }));
+    document.querySelectorAll('.btn-upload').forEach(b => b.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*,audio/*,video/*,application/pdf,.mp4,.webm,.ogg,.mov,.avi,.mkv,.mp3,.wav';
+        input.click();
+        input.onchange = async function() {
+            if (this.files && this.files[0]) {
+                await uploadToDrive(this.files[0], id);
+            }
+            this.value = '';
+        };
+    }));
+    document.querySelectorAll('.btn-send-msg').forEach(b => b.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const inp = this.parentElement.querySelector('.msg-input');
+        if (inp && inp.value.trim()) { addMessageToTile(id, inp.value.trim()); inp.value = ''; }
+    }));
+    document.querySelectorAll('.msg-input').forEach(inp => inp.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') { const id=this.dataset.id; const btn=this.parentElement.querySelector('.btn-send-msg'); if(btn) btn.click(); }
+    }));
+    document.querySelectorAll('.btn-delete-msg').forEach(b => b.addEventListener('click', function() {
+        if (confirm('Remover mensagem?')) deleteMessageFromTile(this.dataset.tile, this.dataset.msg);
+    }));
+    document.querySelectorAll('.pdf-preview').forEach(el => {
+        el.addEventListener('click', function() {
+            const tileId = this.dataset.id;
+            const tile = tiles.find(t => t.id === tileId);
+            if (tile && tile.fileUrl) {
+                window.open(tile.fileUrl, '_blank');
+            } else if (tile && tile.fileData) {
+                window.open(tile.fileData, '_blank');
+            }
+        });
+    });
+    document.querySelectorAll('.btn-expand-text').forEach(btn => {
+        btn.addEventListener('click', function() {
+            expandText(this.dataset.id);
+        });
+    });
+
+    const active = tiles.filter(t => t.active !== false).length;
+    document.getElementById('wandererStatus').textContent = `percorrendo ${active} blocos`;
+}
+
+// ============================================================
+//  MODAL EDIÇÃO
+// ============================================================
+function openEditModal(id) {
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+        <div class="modal-card">
+            <h3>✏️ Editar azulejo</h3>
+            <input type="text" id="editTitle" value="${escapeHtml(tile.title)}" placeholder="Título">
+            <textarea id="editContent" rows="4" placeholder="Conteúdo">${escapeHtml(tile.content)}</textarea>
+            <select id="editType">
+                <option value="texto" ${tile.type==='texto'?'selected':''}>📄 Texto</option>
+                <option value="imagem" ${tile.type==='imagem'?'selected':''}>🖼️ Imagem</option>
+                <option value="audio" ${tile.type==='audio'?'selected':''}>🎵 Áudio</option>
+                <option value="video" ${tile.type==='video'?'selected':''}>🎬 Vídeo</option>
+                <option value="pdf" ${tile.type==='pdf'?'selected':''}>📄 PDF</option>
+            </select>
+            <input type="text" id="editTags" value="${(tile.tags||[]).join(', ')}" placeholder="Tags (separadas por vírgula)">
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modalCancel">Cancelar</button>
+                <button class="btn-save" id="modalSave">Salvar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelector('#modalCancel').addEventListener('click', () => modal.remove());
+
+    modal.querySelector('#modalSave').addEventListener('click', function() {
+        const nt = modal.querySelector('#editTitle').value;
+        const nc = modal.querySelector('#editContent').value;
+        const nt2 = modal.querySelector('#editType').value;
+        const ntags = modal.querySelector('#editTags').value.split(',').map(s => s.trim()).filter(Boolean);
+        editTile(id, nt, nc, nt2, ntags);
+        modal.remove();
+    });
+
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
+
+// ============================================================
+//  UTILITÁRIOS
+// ============================================================
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; });
+}
+
+// ============================================================
+//  NOVO MOSAICO COM BACKUP
+// ============================================================
+function newMosaic() {
+    if (!confirm('Criar novo mosaico vazio? O atual será guardado como backup.')) return;
+    if (tiles.length > 0) {
+        localStorage.setItem('enheduanna_mosaic_backup', JSON.stringify(tiles));
+        localStorage.setItem('enheduanna_agents_backup', JSON.stringify(agentImages));
+    }
+    tiles = [];
+    saveToLocalStorage();
+    renderMosaic();
+}
+
+function recoverMosaic() {
+    const backup = localStorage.getItem('enheduanna_mosaic_backup');
+    if (!backup) {
+        alert('❌ Nenhum mosaico anterior encontrado.');
+        return;
+    }
+    if (!confirm('Substituir o mosaico atual pelo anterior?')) return;
+    try {
+        const restored = JSON.parse(backup);
+        tiles = restored;
+        tiles.forEach(t => { if (!t.messages) t.messages = []; });
+        const agentsBackup = localStorage.getItem('enheduanna_agents_backup');
+        if (agentsBackup) {
+            agentImages = JSON.parse(agentsBackup);
+            applyAgentImages();
+        }
+        saveToLocalStorage();
+        renderMosaic();
+        alert('✅ Mosaico anterior recuperado.');
+    } catch (e) {
+        alert('❌ Erro ao recuperar: ' + e.message);
+    }
+}
+
+function resetToInitial() {
+    if (!confirm('Restaurar original?')) return;
+    tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
+    saveToLocalStorage(); renderMosaic();
+}
+
+function toggleShowInactive() { showInactive = !showInactive; renderMosaic(); }
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+        document.execCommand('copy');
+        alert('✅ Copiado! Pode colar onde desejar.');
+    } catch(e) {
+        alert('❌ Não foi possível copiar. Selecione e copie manualmente.');
+    }
+    document.body.removeChild(ta);
+}
+
+// ============================================================
+//  INICIALIZAÇÃO
+// ============================================================
+function init() {
+    loadMosaic();
+    renderMosaic();
+    setupAgentUpload('enheduanna');
+    setupAgentUpload('wanderer');
+    setupAgentUpload('ogum');
+
+    document.getElementById('btnAddTile').addEventListener('click', () => addTile());
+    document.getElementById('btnReset').addEventListener('click', resetToInitial);
+    document.getElementById('btnNewMosaic').addEventListener('click', newMosaic);
+    document.getElementById('btnRecover').addEventListener('click', recoverMosaic);
+    document.getElementById('btnToggleInactive').addEventListener('click', toggleShowInactive);
+    document.getElementById('btnExport').addEventListener('click', exportEstado);
+    document.getElementById('btnImport').addEventListener('click', function() {
+        document.getElementById('fileInputImport').click();
+    });
+    document.getElementById('fileInputImport').addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            importEstado(this.files[0]);
+        }
+        this.value = '';
+    });
+    document.getElementById('btnSaveVersion').addEventListener('click', function() {
+        const desc = prompt('Descrição da versão (opcional):');
+        saveVersionToDrive(desc || 'Sem descrição');
+    });
+    document.getElementById('btnListVersions').addEventListener('click', listVersions);
+    document.getElementById('btnShare').addEventListener('click', function() {
+        const data = { tiles, exportedAt: new Date().toISOString() };
+        const jsonStr = JSON.stringify(data);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(jsonStr).then(() => {
+                alert('✅ Estado copiado! Pode colar onde desejar.');
+            }).catch(() => {
+                fallbackCopy(jsonStr);
+            });
+        } else {
+            fallbackCopy(jsonStr);
+        }
+    });
+
+    document.querySelectorAll('.mode-btn').forEach(b => {
+        b.addEventListener('click', function() {
+            document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    document.getElementById('enheduannaAvatar').addEventListener('click', function() {
+        const tile = findActiveTile();
+        if (!tile) { alert('Selecione uma tile.'); return; }
+        const sug = generateSuggestions(tile);
+        document.getElementById('suggestionText').textContent = `💡 ${sug}`;
+        document.getElementById('enheduannaStatus').textContent = `a tecer sobre "${tile.title}"`;
+        addMessageToTile(tile.id, `📜 Enheduanna: ${sug}`);
+        renderMosaic();
+    });
+
+    document.getElementById('wandererAvatar').addEventListener('click', function() {
+        const tile = findActiveTile();
+        if (tile) {
+            highlightTile(tile.id);
+            document.getElementById('wandererStatus').textContent = `percorrendo: "${tile.title}"`;
+            addMessageToTile(tile.id, '🚶 Wanderer passou por aqui.');
+        } else {
+            const center = tiles.find(t => t.title.includes('Elsinore'));
+            if (center) {
+                highlightTile(center.id);
+                document.getElementById('wandererStatus').textContent = 'percorrendo: "Elsinore" (centro)';
+                addMessageToTile(center.id, '🚶 Wanderer chegou ao centro.');
+            }
+        }
+        renderMosaic();
+    });
+
+    document.getElementById('ogumAvatar').addEventListener('click', function() {
+        const tile = findActiveTile();
+        const info = tile ? `sobre "${tile.title}"` : 'sem tile ativa';
+        const result = prompt(`⚔️ Ogum (Inventor)
+
+Ferramentas sugeridas:
+• Udio (música generativa)
+• DALL-E (imagem)
+• Runway (vídeo)
+• NotebookLM (curadoria)
+• Twine (hiperficção interativa)
+• Poemário (poesia combinatória)
+
+O que deseja fazer?
+${info}`);
+        if (result && result.trim()) {
+            const target = tile || tiles[0];
+            if (target) {
+                addMessageToTile(target.id, `⚔️ Ogum: ${result.trim()}`);
+                renderMosaic();
+            }
+            document.getElementById('ogumStatus').textContent = `última: ${result.trim().substring(0,30)}...`;
+        } else {
+            document.getElementById('ogumStatus').textContent = 'à espera de comando...';
+        }
+    });
+
+    const sugestoes = [
+        '💡 "Ligue \'Metal fundente\' à cena da praia?"',
+        '💡 "Que tal gerar uma imagem para \'Palavras diamantes\'?"',
+        '💡 "Este bloco sobre exílio conecta-se a Berlim 1989"',
+        '💡 "Pode criar um mini-resumo para partilhar com o Professor"',
+    ];
+    let si = 0;
+    setInterval(() => {
+        const el = document.getElementById('suggestionText');
+        if (el) { si = (si+1)%sugestoes.length; el.textContent = sugestoes[si]; }
+    }, 7000);
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
