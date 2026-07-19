@@ -371,7 +371,7 @@
 
     <!-- AÇÕES -->
     <div class="global-actions">
-        <button id="btnAddTile" class="btn-primary">➕ Novo azulejo</button>
+        <button id="btnAddTile" class="btn-primary">�� Novo azulejo</button>
         <button id="btnReset">⟳ Restaurar</button>
         <button id="btnNewMosaic">🔄 Novo mosaico</button>
         <button id="btnRecover" class="btn-secondary">↩️ Recuperar anterior</button>
@@ -397,9 +397,9 @@ const INITIAL_TILES = [
     { id: 't3', title: '🤲 Mãos de Elsinore', content: 'Entre nós e as palavras, surdamente,\nas mãos e as paredes de Elsinore', type: 'texto', tags: ['Cesariny','Elsinore'], messages: [] },
     { id: 't4', title: '💎 Palavras diamantes', content: 'E há palavras e noturnas palavras gemidos\npalavras diamantes palavras nunca escritas', type: 'texto', tags: ['Cesariny','diamantes'], messages: [] },
     { id: 't5', title: '⚔️ Nosso dever falar', content: 'Entre nós e as palavras, os emparedados\ne entre nós e as palavras, o nosso dever falar', type: 'texto', tags: ['Cesariny','dever'], messages: [] },
-    { id: 't6', title: '🌰 Castanha · Lorca · Alhambra', content: 'azulejos do Infinito\nme levam por linhas e formas\nao ponto\naí encontro este sabor sublime\no gosto da castanha', type: 'texto', tags: ['castanha','Lorca','Alhambra'], messages: [] },
-    { id: 't7', title: '📖 Escadas da casa não tomada', content: 'E na bibliografia daquele que gostaria de nunca lembrar está que ainda vive na casa.\nAs escadas permanecem, são atuais.', type: 'texto', tags: ['Cortázar','escadas'], messages: [] },
-    { id: 't8', title: '💌 Widmung (TK)', content: 'Du verstehst es nicht, oder, und vielleicht erkläre ich es dir auch gar nicht ganz...', type: 'texto', tags: ['Widmung','alemão'], messages: [] },
+    { id: 't6', title: '🌰 Castanha · Lorca · Alhambra', content: 'azulejos do Infinito\nme levam por linhas e formas\nao ponto\naí encontro este sabor sublime\no gosto da castanha', type: 'texto', tags: ['Lorca','Alhambra'], messages: [] },
+    { id: 't7', title: '📖 Escadas da casa não tomada', content: 'E na bibliografia daquele que gostaria de nunca lembrar está que ainda vive na casa.\nAs escadas permanecem, são atuais.', type: 'texto', tags: ['Frost','memória'], messages: [] },
+    { id: 't8', title: '💌 Widmung (TK)', content: 'Du verstehst es nicht, oder, und vielleicht erkläre ich es dir auch gar nicht ganz...', type: 'texto', tags: ['Widmung','alemão'], messages: [] }
 ];
 
 // ============================================================
@@ -412,7 +412,8 @@ let agentImages = { enheduanna: '', wanderer: '', ogum: '' };
 // ============================================================
 //  CONFIGURAÇÃO DO UPLOAD PARA O GOOGLE DRIVE
 // ============================================================
-const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
+const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbzZEb6BovvR0OTDoBB64nXsxb6Qo1LgPC-DGvnK1ynT5HWy9By3rv7atw6pdftBvf3Y/exec';
+
 // ============================================================
 //  PERSISTÊNCIA (localStorage)
 // ============================================================
@@ -423,6 +424,7 @@ function showSaved() {
     clearTimeout(el._timeout);
     el._timeout = setTimeout(() => el.classList.remove('show'), 2000);
 }
+
 function saveToLocalStorage() {
     try {
         localStorage.setItem('enheduanna_mosaic', JSON.stringify(tiles));
@@ -432,9 +434,6 @@ function saveToLocalStorage() {
         console.warn('Erro ao guardar:', e);
     }
 }
-
-const result = await response.json();
-console.log('📦 Resposta do servidor (detalhada):', JSON.stringify(result, null, 2));
 
 function loadFromLocalStorage() {
     const stored = localStorage.getItem('enheduanna_mosaic');
@@ -462,26 +461,11 @@ function loadMosaic() {
 }
 
 // ============================================================
-//  FUNÇÃO DE UPLOAD PARA O GOOGLE DRIVE (CORRIGIDA - URL-encoded)
+//  FUNÇÃO DE UPLOAD PARA O GOOGLE DRIVE
 // ============================================================
-// ============================================================
-//  ENHEDUANNA UPLOADER - Google Apps Script (Corrigido)
-// ============================================================
-
-// Apenas o ID da pasta (retirado do teu URL)
-  
-// ============================================================
-//  FUNÇÃO DE UPLOAD PARA O GOOGLE DRIVE (com logs e erros)
-// ============================================================
- 
 async function uploadToDrive(file, tileId) {
     try {
-        // URL do proxy + URL do seu script
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
-        const url = proxyUrl + scriptUrl;
-
-        console.log('📤 URL do upload (com proxy):', url);
+        console.log('📤 URL do upload:', UPLOAD_URL);
         console.log('📄 Ficheiro:', file.name, file.size, file.type);
 
         // Converte o ficheiro para Base64
@@ -498,10 +482,9 @@ async function uploadToDrive(file, tileId) {
         payload.append('filetype', file.type);
         payload.append('filedata', base64);
 
-        const response = await fetch(url, {
+        const response = await fetch(UPLOAD_URL, {
             method: 'POST',
             body: payload.toString()
-            // Sem headers - o navegador define automaticamente
         });
 
         console.log('📨 Status da resposta:', response.status);
@@ -558,119 +541,7 @@ async function uploadToDrive(file, tileId) {
         alert(`❌ Erro ao enviar ficheiro: ${error.message}`);
         return null;
     }
-}/*async function uploadToDrive(file, base64Data) {
-    const url = 'https://script.google.com/macros/s/AKfycbx0w8iWuvyt6qoDhEbL10QgXcXFV-gsclhXsx3wuzSqpIeeYxQsVs57beb8mb0j1ist/exec'; 
-    // Usa o teu URL atualizado aqui
-    
-    // Como o Script espera e.parameter (URL-encoded), usamos URLSearchParams
-    const formData = new URLSearchParams();
-    formData.append('filedata', base64Data.split(',')[1] || base64Data); // Remove o cabeçalho "data:image/png;base64," se existir
-    formData.append('filename', file.name);
-    formData.append('filetype', file.type);
-
-    try {
-        console.log("📤 A enviar para a Google Drive...");
-        const response = await fetch(url, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        });
-
-        const result = await response.json();
-        if (result.success) {
-            console.log("✅ Sucesso!", result);
-            // Aqui podes associar o result.fileUrl à tua Tile ativa no Mosaico!
-            return result.fileUrl;
-        } else {
-            console.error("❌ Erro retornado pelo Google Script:", result.error);
-        }
-    } catch (err) {
-        console.error("❌ Falha crítica no fetch (CORS ou rede):", err);
-    }
 }
-/async function uploadToDrive(file, tileId) {
-    try {
-        console.log('📤 URL do upload:', UPLOAD_URL);
-        console.log('📄 Ficheiro:', file.name, file.size, file.type);
-
-        // Converte o ficheiro para Base64
-        const reader = new FileReader();
-        const base64 = await new Promise((resolve, reject) => {
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-
-        // Prepara os dados como URL-encoded (evita CORS preflight)
-        const payload = new URLSearchParams();
-        payload.append('filename', file.name);
-        payload.append('filetype', file.type);
-        payload.append('filesize', file.size);
-        payload.append('filedata', base64);
-
-        const response = await fetch(UPLOAD_URL, {
-    method: 'POST',
-    body: payload.toString()
-    // sem headers, o navegador define automaticamente
-    });
-
-        console.log('📨 Status da resposta:', response.status);
-
-         if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('📦 Resposta do servidor:', result);
-
-        if (!result || typeof result !== 'object') {
-            throw new Error('Resposta inválida do servidor.');
-        }
-
-        if (!result.success) {
-            throw new Error(result.error || 'Erro no servidor.');
-        }
-
-        if (!result.fileUrl) {
-            throw new Error('Resposta do servidor não contém fileUrl.');
-        }
-
-        const tile = tiles.find(t => t.id === tileId);
-        if (!tile) {
-            throw new Error('Tile não encontrada.');
-        }
-
-        tile.fileUrl = result.fileUrl;
-        tile.fileName = result.fileName || file.name;
-        tile.fileType = result.fileType || file.type;
-        tile.fileId = result.fileId;
-
-        const fileType = tile.fileType;
-        if (fileType.startsWith('image/')) {
-            tile.type = 'imagem';
-        } else if (fileType.startsWith('audio/')) {
-            tile.type = 'audio';
-        } else if (fileType.startsWith('video/')) {
-            tile.type = 'video';
-        } else if (fileType === 'application/pdf') {
-            tile.type = 'pdf';
-        } else {
-            tile.type = 'texto';
-        }
-
-        saveToLocalStorage();
-        renderMosaic();
-        alert(`✅ Ficheiro "${tile.fileName}" guardado na Drive!`);
-        return result;
-
-    } catch (error) {
-        console.error('❌ Erro no upload:', error);
-        alert(`❌ Erro ao enviar ficheiro: ${error.message}`);
-        return null;
-    }
-}*/
 
 // ============================================================
 //  EXPORTAR E IMPORTAR JSON (leve, sem Base64)
@@ -729,7 +600,6 @@ async function saveVersionToDrive(description) {
         tiles: tiles
     };
     try {
-        // Usar o mesmo método URL-encoded para guardar versões
         const payload = new URLSearchParams();
         payload.append('filename', versionName);
         payload.append('filetype', 'application/json');
@@ -737,7 +607,6 @@ async function saveVersionToDrive(description) {
 
         const response = await fetch(UPLOAD_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: payload.toString()
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -999,391 +868,215 @@ function highlightTile(id) {
             el.style.boxShadow = '';
             el.style.borderColor = '';
         });
-    }, 5000);
-}
-
-function generateSuggestions(tile) {
-    const tags = tile.tags || [];
-    const content = tile.content || '';
-    const suggestions = [
-        `"${tile.title}" pode ligar-se a um bloco sobre exílio.`,
-        `Este bloco contém "${content.substring(0,30)}..." — talvez ligue a uma imagem.`,
-        `Que tal gerar um mini-resumo sobre "${tile.title}"?`,
-        `A palavra "${tags[0] || 'conceito'}" aparece noutros blocos.`,
-        `Este bloco poderia beneficiar de uma paisagem sonora.`,
-    ];
-    return suggestions[Math.floor(Math.random() * suggestions.length)];
+    }, 3000);
 }
 
 // ============================================================
-//  RENDER
+//  RENDERIZAÇÃO
 // ============================================================
+function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return (text || '').replace(/[&<>"']/g, m => map[m]);
+}
+
 function renderMosaic() {
     const container = document.getElementById('mosaic');
     if (!container) return;
     container.innerHTML = '';
-
-    const visible = tiles.filter(t => showInactive || t.active !== false);
-    visible.forEach(tile => {
-        const div = document.createElement('div');
-        div.className = `tile tipo-${tile.type}`;
-        if (tile.active === false) div.classList.add('inactive');
-        if (tile.isOverlay) div.classList.add('is-overlay');
-        div.dataset.id = tile.id;
-
-        const tagsHtml = (tile.tags||[]).map(t => `<span>#${t}</span>`).join('');
-
-        let contentHtml = '';
-        if (tile.fileUrl) {
-            const fileType = tile.fileType || 'image';
-            if (fileType.startsWith('image/') || fileType === 'image') {
-                contentHtml = `<img src="${tile.fileUrl}" alt="${escapeHtml(tile.title)}" style="max-width:100%;border-radius:8px;">`;
-            } else if (fileType.startsWith('audio/') || fileType === 'audio') {
-                contentHtml = `<audio controls src="${tile.fileUrl}"></audio>`;
-            } else if (fileType.startsWith('video/') || fileType === 'video') {
-                contentHtml = `<video controls src="${tile.fileUrl}" style="max-width:100%;border-radius:8px;"></video>`;
-            } else if (fileType === 'application/pdf' || fileType === 'pdf') {
-                contentHtml = `<div class="pdf-preview" data-id="${tile.id}"><span style="font-size:1.5rem;">📄</span><span>${escapeHtml(tile.fileName || tile.content)}</span><span style="font-size:0.6rem;opacity:0.5;">(clique para abrir)</span></div>`;
-            }
-        } else if (tile.fileData) {
-            if (tile.fileType === 'image') {
-                contentHtml = `<img src="${tile.fileData}" alt="${escapeHtml(tile.title)}">`;
-            } else if (tile.fileType === 'audio') {
-                contentHtml = `<audio controls src="${tile.fileData}"></audio>`;
-            } else if (tile.fileType === 'video') {
-                contentHtml = `<video controls src="${tile.fileData}" style="max-width:100%;border-radius:8px;"></video>`;
-            } else if (tile.fileType === 'pdf') {
-                contentHtml = `<div class="pdf-preview" data-id="${tile.id}"><span style="font-size:1.5rem;">📄</span><span>${escapeHtml(tile.content)}</span><span style="font-size:0.6rem;opacity:0.5;">(clique para abrir)</span></div>`;
-            }
-        } else {
-            contentHtml = escapeHtml(tile.content).replace(/\n/g, '<br>');
-            if (tile.content && tile.content.length > 200) {
-                contentHtml += `<button class="btn-expand-text" data-id="${tile.id}">📖 Expandir</button>`;
-            }
-        }
-
-        let msgsHtml = '';
-        if (tile.messages && tile.messages.length > 0) {
-            msgsHtml = `<div class="tile-messages"><div class="messages-title">💬 ${tile.messages.length} msg(s)</div>`;
-            tile.messages.forEach(msg => {
-                msgsHtml += `<div class="message-item"><span>${escapeHtml(msg.text)}</span><span class="message-time">${msg.timestamp}</span><button class="btn-delete-msg" data-tile="${tile.id}" data-msg="${msg.id}">✕</button></div>`;
-            });
-            msgsHtml += `</div>`;
-        }
-
-        div.innerHTML = `
+    tiles.forEach(tile => {
+        if (!showInactive && !tile.active) return;
+        const el = document.createElement('div');
+        el.className = `tile tipo-${tile.type}`;
+        if (!tile.active) el.classList.add('inactive');
+        if (tile.isOverlay) el.classList.add('is-overlay');
+        el.dataset.id = tile.id;
+        el.innerHTML = `
             <div class="tile-header">
-                <span class="tile-type">${tile.type}${tile.isOverlay ? ' · sobre' : ''}</span>
+                <span class="tile-type">${tile.type.toUpperCase()}</span>
                 <div class="tile-actions-top">
-                    <button class="btn-copy-overlay" data-id="${tile.id}" title="Copiar sobre">📋 Sob</button>
-                    <button class="btn-split" data-id="${tile.id}" title="Subdividir">✂️ Div</button>
-                    <button class="btn-duplicate" data-id="${tile.id}">🔄</button>
-                    <button class="btn-edit" data-id="${tile.id}">✏️</button>
-                    <button class="btn-toggle" data-id="${tile.id}">${tile.active !== false ? '🔆' : '🌙'}</button>
-                    <button class="btn-delete" data-id="${tile.id}">🗑️</button>
+                    <button title="Editar" onclick="editTileModal('${tile.id}')">✏️</button>
+                    <button title="Duplicar" onclick="duplicateTile('${tile.id}')">📋</button>
+                    <button title="Sobrepor" onclick="copyTileWithOverlay('${tile.id}')">🔄</button>
+                    <button title="Dividir" onclick="splitTile('${tile.id}')">✂️</button>
+                    <button title="Ativar/Desativar" onclick="toggleActive('${tile.id}')">${tile.active ? '👁️' : '🔒'}</button>
+                    <button title="Upload" onclick="requestFileUpload('${tile.id}')" class="btn-upload">⬆️</button>
+                    <button title="Apagar" onclick="deleteTile('${tile.id}')" style="opacity:0.4;">🗑️</button>
                 </div>
             </div>
-            <div class="tile-title">${escapeHtml(tile.title)}</div>
-            <div class="tile-content">${contentHtml}</div>
-            ${msgsHtml}
-            <div class="tile-message-input">
-                <input type="text" class="msg-input" data-id="${tile.id}" placeholder="Comentário..." />
-                <button class="btn-send-msg" data-id="${tile.id}">Enviar</button>
+            <h3 class="tile-title">${escapeHtml(tile.title)}</h3>
+            <div class="tile-content">
+        `;
+        if (tile.fileUrl) {
+            const fileType = tile.fileType || '';
+            if (fileType.startsWith('image/')) {
+                el.querySelector('.tile-content').innerHTML += `<img src="${tile.fileUrl}" alt="${escapeHtml(tile.fileName || 'imagem')}">`;
+            } else if (fileType.startsWith('audio/')) {
+                el.querySelector('.tile-content').innerHTML += `<audio controls style="width:100%;"><source src="${tile.fileUrl}"></audio>`;
+            } else if (fileType.startsWith('video/')) {
+                el.querySelector('.tile-content').innerHTML += `<video controls style="width:100%;"><source src="${tile.fileUrl}"></video>`;
+            } else if (fileType === 'application/pdf') {
+                el.querySelector('.tile-content').innerHTML += `<div class="pdf-preview" onclick="window.open('${tile.fileUrl}', '_blank')">📄 ${escapeHtml(tile.fileName)}</div>`;
+            }
+        }
+        el.querySelector('.tile-content').innerHTML += escapeHtml(tile.content);
+        el.innerHTML += `
             </div>
             <div class="tile-footer">
-                <div class="tile-tags">${tagsHtml}</div>
+                <div class="tile-tags">
+                    ${tile.tags.map(tag => `<span>${escapeHtml(tag)}</span>`).join('')}
+                </div>
                 <div class="tile-actions-bottom">
-                    <button class="btn-upload" data-id="${tile.id}">📎 Upload</button>
+                    <button onclick="expandText('${tile.id}')">🔍</button>
                 </div>
             </div>
         `;
-        container.appendChild(div);
+        if (tile.messages && tile.messages.length > 0) {
+            el.innerHTML += `
+                <div class="tile-messages">
+                    <div class="messages-title">Mensagens</div>
+                    ${tile.messages.map(msg => `
+                        <div class="message-item">
+                            ${escapeHtml(msg.text)}
+                            <span class="message-time">${msg.timestamp}</span>
+                            <button class="btn-delete-msg" onclick="deleteMessageFromTile('${tile.id}', '${msg.id}')">✕</button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        el.innerHTML += `
+            <div class="tile-message-input">
+                <input type="text" placeholder="Adicione uma mensagem..." data-tile-id="${tile.id}">
+                <button onclick="addMessageFromInput('${tile.id}')">Enviar</button>
+            </div>
+        `;
+        container.appendChild(el);
     });
-
-    // Eventos
-    document.querySelectorAll('.btn-duplicate').forEach(b => b.addEventListener('click', function() { duplicateTile(this.dataset.id); }));
-    document.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', function() { openEditModal(this.dataset.id); }));
-    document.querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', function() { deleteTile(this.dataset.id); }));
-    document.querySelectorAll('.btn-toggle').forEach(b => b.addEventListener('click', function() { toggleActive(this.dataset.id); }));
-    document.querySelectorAll('.btn-copy-overlay').forEach(b => b.addEventListener('click', function() { copyTileWithOverlay(this.dataset.id); }));
-    document.querySelectorAll('.btn-split').forEach(b => b.addEventListener('click', function() { splitTile(this.dataset.id); }));
-    document.querySelectorAll('.btn-upload').forEach(b => b.addEventListener('click', function() {
-        const id = this.dataset.id;
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*,audio/*,video/*,application/pdf,.mp4,.webm,.ogg,.mov,.avi,.mkv,.mp3,.wav';
-        input.click();
-        input.onchange = async function() {
-            if (this.files && this.files[0]) {
-                await uploadToDrive(this.files[0], id);
-            }
-            this.value = '';
-        };
-    }));
-    document.querySelectorAll('.btn-send-msg').forEach(b => b.addEventListener('click', function() {
-        const id = this.dataset.id;
-        const inp = this.parentElement.querySelector('.msg-input');
-        if (inp && inp.value.trim()) { addMessageToTile(id, inp.value.trim()); inp.value = ''; }
-    }));
-    document.querySelectorAll('.msg-input').forEach(inp => inp.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') { const id=this.dataset.id; const btn=this.parentElement.querySelector('.btn-send-msg'); if(btn) btn.click(); }
-    }));
-    document.querySelectorAll('.btn-delete-msg').forEach(b => b.addEventListener('click', function() {
-        if (confirm('Remover mensagem?')) deleteMessageFromTile(this.dataset.tile, this.dataset.msg);
-    }));
-    document.querySelectorAll('.pdf-preview').forEach(el => {
-        el.addEventListener('click', function() {
-            const tileId = this.dataset.id;
-            const tile = tiles.find(t => t.id === tileId);
-            if (tile && tile.fileUrl) {
-                window.open(tile.fileUrl, '_blank');
-            } else if (tile && tile.fileData) {
-                window.open(tile.fileData, '_blank');
-            }
-        });
-    });
-    document.querySelectorAll('.btn-expand-text').forEach(btn => {
-        btn.addEventListener('click', function() {
-            expandText(this.dataset.id);
-        });
-    });
-
-    const active = tiles.filter(t => t.active !== false).length;
-    document.getElementById('wandererStatus').textContent = `percorrendo ${active} blocos`;
 }
 
-// ============================================================
-//  MODAL EDIÇÃO
-// ============================================================
-function openEditModal(id) {
+function addMessageFromInput(tileId) {
+    const input = document.querySelector(`input[data-tile-id="${tileId}"]`);
+    if (input && input.value.trim()) {
+        addMessageToTile(tileId, input.value);
+        input.value = '';
+    }
+}
+
+function requestFileUpload(tileId) {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            uploadToDrive(file, tileId);
+        }
+        document.body.removeChild(fileInput);
+    });
+    fileInput.click();
+}
+
+function editTileModal(id) {
     const tile = tiles.find(t => t.id === id);
     if (!tile) return;
     const modal = document.createElement('div');
     modal.className = 'modal-bg';
     modal.innerHTML = `
         <div class="modal-card">
-            <h3>✏️ Editar azulejo</h3>
-            <input type="text" id="editTitle" value="${escapeHtml(tile.title)}" placeholder="Título">
-            <textarea id="editContent" rows="4" placeholder="Conteúdo">${escapeHtml(tile.content)}</textarea>
+            <h3>Editar azulejo</h3>
+            <input type="text" id="editTitle" value="${escapeHtml(tile.title)}">
+            <textarea id="editContent">${escapeHtml(tile.content)}</textarea>
             <select id="editType">
-                <option value="texto" ${tile.type==='texto'?'selected':''}>📄 Texto</option>
-                <option value="imagem" ${tile.type==='imagem'?'selected':''}>🖼️ Imagem</option>
-                <option value="audio" ${tile.type==='audio'?'selected':''}>🎵 Áudio</option>
-                <option value="video" ${tile.type==='video'?'selected':''}>🎬 Vídeo</option>
-                <option value="pdf" ${tile.type==='pdf'?'selected':''}>📄 PDF</option>
+                <option value="texto" ${tile.type === 'texto' ? 'selected' : ''}>Texto</option>
+                <option value="imagem" ${tile.type === 'imagem' ? 'selected' : ''}>Imagem</option>
+                <option value="audio" ${tile.type === 'audio' ? 'selected' : ''}>Áudio</option>
+                <option value="video" ${tile.type === 'video' ? 'selected' : ''}>Vídeo</option>
+                <option value="pdf" ${tile.type === 'pdf' ? 'selected' : ''}>PDF</option>
             </select>
-            <input type="text" id="editTags" value="${(tile.tags||[]).join(', ')}" placeholder="Tags (separadas por vírgula)">
+            <input type="text" id="editTags" value="${tile.tags.join(', ')}" placeholder="Tags separadas por vírgula">
             <div class="modal-actions">
-                <button class="btn-cancel" id="modalCancel">Cancelar</button>
-                <button class="btn-save" id="modalSave">Salvar</button>
+                <button class="btn-cancel" onclick="this.closest('.modal-bg').remove()">Cancelar</button>
+                <button class="btn-save" onclick="saveEditedTile('${id}')">Guardar</button>
             </div>
         </div>
     `;
     document.body.appendChild(modal);
-
-    modal.querySelector('#modalCancel').addEventListener('click', () => modal.remove());
-
-    modal.querySelector('#modalSave').addEventListener('click', function() {
-        const nt = modal.querySelector('#editTitle').value;
-        const nc = modal.querySelector('#editContent').value;
-        const nt2 = modal.querySelector('#editType').value;
-        const ntags = modal.querySelector('#editTags').value.split(',').map(s => s.trim()).filter(Boolean);
-        editTile(id, nt, nc, nt2, ntags);
-        modal.remove();
-    });
-
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
 
-// ============================================================
-//  UTILITÁRIOS
-// ============================================================
-function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, m => { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; });
+function saveEditedTile(id) {
+    const newTitle = document.getElementById('editTitle').value;
+    const newContent = document.getElementById('editContent').value;
+    const newType = document.getElementById('editType').value;
+    const newTags = document.getElementById('editTags').value.split(',').map(t => t.trim()).filter(t => t);
+    editTile(id, newTitle, newContent, newType, newTags);
+    document.querySelector('.modal-bg').remove();
 }
 
 // ============================================================
-//  NOVO MOSAICO COM BACKUP
+//  MODOS E EVENTOS
 // ============================================================
-function newMosaic() {
-    if (!confirm('Criar novo mosaico vazio? O atual será guardado como backup.')) return;
-    if (tiles.length > 0) {
-        localStorage.setItem('enheduanna_mosaic_backup', JSON.stringify(tiles));
-        localStorage.setItem('enheduanna_agents_backup', JSON.stringify(agentImages));
-    }
-    tiles = [];
-    saveToLocalStorage();
-    renderMosaic();
-}
-
-function recoverMosaic() {
-    const backup = localStorage.getItem('enheduanna_mosaic_backup');
-    if (!backup) {
-        alert('❌ Nenhum mosaico anterior encontrado.');
-        return;
-    }
-    if (!confirm('Substituir o mosaico atual pelo anterior?')) return;
-    try {
-        const restored = JSON.parse(backup);
-        tiles = restored;
-        tiles.forEach(t => { if (!t.messages) t.messages = []; });
-        const agentsBackup = localStorage.getItem('enheduanna_agents_backup');
-        if (agentsBackup) {
-            agentImages = JSON.parse(agentsBackup);
-            applyAgentImages();
-        }
-        saveToLocalStorage();
-        renderMosaic();
-        alert('✅ Mosaico anterior recuperado.');
-    } catch (e) {
-        alert('❌ Erro ao recuperar: ' + e.message);
-    }
-}
-
-function resetToInitial() {
-    if (!confirm('Restaurar original?')) return;
-    tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
-    saveToLocalStorage(); renderMosaic();
-}
-
-function toggleShowInactive() { showInactive = !showInactive; renderMosaic(); }
-
-function fallbackCopy(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.left = '-9999px';
-    document.body.appendChild(ta);
-    ta.select();
-    try {
-        document.execCommand('copy');
-        alert('✅ Copiado! Pode colar onde desejar.');
-    } catch(e) {
-        alert('❌ Não foi possível copiar. Selecione e copie manualmente.');
-    }
-    document.body.removeChild(ta);
-}
-
-// ============================================================
-//  INICIALIZAÇÃO
-// ============================================================
-function init() {
+document.addEventListener('DOMContentLoaded', function() {
     loadMosaic();
-    renderMosaic();
-    setupAgentUpload('enheduanna');
-    setupAgentUpload('wanderer');
-    setupAgentUpload('ogum');
-
+    
     document.getElementById('btnAddTile').addEventListener('click', () => addTile());
-    document.getElementById('btnReset').addEventListener('click', resetToInitial);
-    document.getElementById('btnNewMosaic').addEventListener('click', newMosaic);
-    document.getElementById('btnRecover').addEventListener('click', recoverMosaic);
-    document.getElementById('btnToggleInactive').addEventListener('click', toggleShowInactive);
+    document.getElementById('btnReset').addEventListener('click', function() {
+        if (confirm('Restaurar ao estado inicial? Isto não pode ser desfeito.')) {
+            tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
+            saveToLocalStorage();
+            renderMosaic();
+        }
+    });
+    document.getElementById('btnNewMosaic').addEventListener('click', function() {
+        if (confirm('Criar novo mosaico? Isto apagará tudo.')) {
+            tiles = [];
+            saveToLocalStorage();
+            renderMosaic();
+        }
+    });
+    document.getElementById('btnRecover').addEventListener('click', () => alert('Funcionalidade em desenvolvimento.'));
+    document.getElementById('btnToggleInactive').addEventListener('click', function() {
+        showInactive = !showInactive;
+        renderMosaic();
+        this.style.opacity = showInactive ? '1' : '0.5';
+    });
     document.getElementById('btnExport').addEventListener('click', exportEstado);
     document.getElementById('btnImport').addEventListener('click', function() {
         document.getElementById('fileInputImport').click();
     });
     document.getElementById('fileInputImport').addEventListener('change', function(e) {
-        if (this.files && this.files[0]) {
-            importEstado(this.files[0]);
+        if (e.target.files[0]) {
+            importEstado(e.target.files[0]);
+            e.target.value = '';
         }
-        this.value = '';
     });
     document.getElementById('btnSaveVersion').addEventListener('click', function() {
-        const desc = prompt('Descrição da versão (opcional):');
-        saveVersionToDrive(desc || 'Sem descrição');
+        const desc = prompt('Descrição da versão:');
+        if (desc !== null) {
+            saveVersionToDrive(desc);
+        }
     });
     document.getElementById('btnListVersions').addEventListener('click', listVersions);
     document.getElementById('btnShare').addEventListener('click', function() {
-        const data = { tiles, exportedAt: new Date().toISOString() };
-        const jsonStr = JSON.stringify(data);
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(jsonStr).then(() => {
-                alert('✅ Estado copiado! Pode colar onde desejar.');
-            }).catch(() => {
-                fallbackCopy(jsonStr);
-            });
-        } else {
-            fallbackCopy(jsonStr);
-        }
+        alert('📨 Funcionalidade de partilha em desenvolvimento.');
     });
-
-    document.querySelectorAll('.mode-btn').forEach(b => {
-        b.addEventListener('click', function() {
-            document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+    
+    ['enheduanna', 'wanderer', 'ogum'].forEach(agent => {
+        setupAgentUpload(agent);
+        document.getElementById(`${agent}Avatar`).addEventListener('click', function() {
+            highlightTile(tiles.length > 0 ? tiles[tiles.length-1].id : null);
+        });
+    });
+    
+    applyAgentImages();
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
         });
     });
-
-    document.getElementById('enheduannaAvatar').addEventListener('click', function() {
-        const tile = findActiveTile();
-        if (!tile) { alert('Selecione uma tile.'); return; }
-        const sug = generateSuggestions(tile);
-        document.getElementById('suggestionText').textContent = `💡 ${sug}`;
-        document.getElementById('enheduannaStatus').textContent = `a tecer sobre "${tile.title}"`;
-        addMessageToTile(tile.id, `📜 Enheduanna: ${sug}`);
-        renderMosaic();
-    });
-
-    document.getElementById('wandererAvatar').addEventListener('click', function() {
-        const tile = findActiveTile();
-        if (tile) {
-            highlightTile(tile.id);
-            document.getElementById('wandererStatus').textContent = `percorrendo: "${tile.title}"`;
-            addMessageToTile(tile.id, '🚶 Wanderer passou por aqui.');
-        } else {
-            const center = tiles.find(t => t.title.includes('Elsinore'));
-            if (center) {
-                highlightTile(center.id);
-                document.getElementById('wandererStatus').textContent = 'percorrendo: "Elsinore" (centro)';
-                addMessageToTile(center.id, '🚶 Wanderer chegou ao centro.');
-            }
-        }
-        renderMosaic();
-    });
-
-    document.getElementById('ogumAvatar').addEventListener('click', function() {
-        const tile = findActiveTile();
-        const info = tile ? `sobre "${tile.title}"` : 'sem tile ativa';
-        const result = prompt(`⚔️ Ogum (Inventor)
-
-Ferramentas sugeridas:
-• Udio (música generativa)
-• DALL-E (imagem)
-• Runway (vídeo)
-• NotebookLM (curadoria)
-• Twine (hiperficção interativa)
-• Poemário (poesia combinatória)
-
-O que deseja fazer?
-${info}`);
-        if (result && result.trim()) {
-            const target = tile || tiles[0];
-            if (target) {
-                addMessageToTile(target.id, `⚔️ Ogum: ${result.trim()}`);
-                renderMosaic();
-            }
-            document.getElementById('ogumStatus').textContent = `última: ${result.trim().substring(0,30)}...`;
-        } else {
-            document.getElementById('ogumStatus').textContent = 'à espera de comando...';
-        }
-    });
-
-    const sugestoes = [
-        '💡 "Ligue \'Metal fundente\' à cena da praia?"',
-        '💡 "Que tal gerar uma imagem para \'Palavras diamantes\'?"',
-        '💡 "Este bloco sobre exílio conecta-se a Berlim 1989"',
-        '💡 "Pode criar um mini-resumo para partilhar com o Professor"',
-    ];
-    let si = 0;
-    setInterval(() => {
-        const el = document.getElementById('suggestionText');
-        if (el) { si = (si+1)%sugestoes.length; el.textContent = sugestoes[si]; }
-    }, 7000);
-}
-
-window.onload = init;
+});
 </script>
 </body>
 </html>
