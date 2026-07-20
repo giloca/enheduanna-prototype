@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste Simples</title>
+</head>
+<body>
+    <h1>🧪 Teste de Upload</h1>
+    <input type="file" id="fileInput" />
+    <button id="uploadBtn">📤 Enviar</button>
+    <div id="status"></div>
+    <div id="result"></div>
+
+    <script>
+        const UPLOAD_URL = 'https:script.google.com/macros/s/AKfycbwjp4sUJvwf0oYH93QxjR4RS_rKbFJD1_PFxXjRkRiTpK9QIXf8lHV6eW3fHKzfM2F0/exec'; // substituir
+
+        document.getElementById('uploadBtn').addEventListener('click', async function() {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) {
+                document.getElementById('status').textContent = '❌ Seleciona um ficheiro.';
+                return;
+            }
+
+            document.getElementById('status').textContent = '⏳ A enviar...';
+
+            try {
+                const reader = new FileReader();
+                const base64 = await new Promise((resolve, reject) => {
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+
+                const payload = new URLSearchParams();
+                payload.append('filename', file.name);
+                payload.append('filetype', file.type);
+                payload.append('filedata', base64);
+
+                const response = await fetch(UPLOAD_URL, {
+                    method: 'POST',
+                    body: payload.toString()
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('status').textContent = '✅ Enviado! ID: ' + result.fileId;
+                    document.getElementById('result').innerHTML = `<a href="${result.downloadUrl}" target="_blank">🔗 Ver ficheiro</a>`;
+                } else {
+                    document.getElementById('status').textContent = '❌ Erro: ' + result.error;
+                }
+            } catch (err) {
+                document.getElementById('status').textContent = '❌ Erro: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
