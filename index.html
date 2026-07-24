@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enheduanna · nanna_0-3 · Mosaico Intertextual</title>
+    <style>
+        /* ============================================================
+           ESTILOS (mantidos da versão anterior)
+           ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background-color: #1a1612;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Alhambra_-_detail_of_wall_tiles.jpg/1280px-Alhambra_-_detail_of_wall_tiles.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #f0ece3;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(212, 175, 106, 0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .header-left h1 { font-family: 'Georgia', serif; font-weight: 400; font-size: 1.8rem; color: #ffecb3; letter-spacing: 2px; }
+        .header-left .sub { font-size: 0.8rem; opacity: 0.7; font-style: italic; }
+        .save-indicator {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            background: #4a7c3a;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-indicator.show { opacity: 1; }
+
+        .agents-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(30, 25, 20, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 40px;
+            padding: 0.6rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #b88b4a;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .agent {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+        .agent:hover { border-color: rgba(212, 175, 106, 0.3); }
+        .agent-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #d4af6a;
+            background: #2a2418;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .agent-avatar:hover { transform: scale(1.05); border-color: #ffecb3; }
+        .agent-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .agent-avatar .placeholder { font-size: 1.4rem; opacity: 0.4; }
+        .agent-info { display: flex; flex-direction: column; }
+        .agent-info .label { font-size: 0.7rem; font-weight: 600; color: #ffecb3; }
+        .agent-info .status { font-size: 0.55rem; opacity: 0.6; }
+        .btn-upload-agent {
+            background: transparent;
+            border: 1px solid #b88b4a;
+            color: #f0ece3;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.5rem;
+            transition: 0.2s;
+            margin-top: 0.1rem;
+        }
+        .btn-upload-agent:hover { background: rgba(212, 175, 106, 0.2); }
+
+        .agent-enheduanna {
+            flex: 1; min-width: 180px;
+            border-left: 1px solid #b88b4a;
+            padding-left: 1rem;
+            border-radius: 0;
+        }
+        .agent-enheduanna .suggestion {
+            background: rgba(212, 175, 106, 0.15);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #ffecb3;
+            border-left: 2px solid #d4af6a;
+            animation: pulse-suggestion 2s infinite;
+        }
+        @keyframes pulse-suggestion {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .mode-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .mode-btn {
+            background: transparent;
+            border: 1px solid #b88b4a;
+            color: #f0ece3;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .mode-btn:hover { background: rgba(212, 175, 106, 0.2); }
+        .mode-btn.active { background: #b88b4a; color: #1a1612; font-weight: 600; }
+
+        .mosaic-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tile {
+            background: rgba(30, 25, 20, 0.88);
+            backdrop-filter: blur(3px);
+            border-radius: 16px;
+            padding: 0.8rem 1rem 0.6rem;
+            border-left: 6px solid #d4af6a;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: 0.2s;
+            display: flex; flex-direction: column;
+            cursor: pointer;
+        }
+        .tile:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .tile.inactive { opacity: 0.4; filter: grayscale(0.6); border-left-color: #555; }
+        .tile.central {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+            border-left-color: #ffecb3;
+            border: 2px solid #ffecb3;
+            box-shadow: 0 0 30px rgba(212,175,106,0.4);
+        }
+        .tile.tipo-texto { border-left-color: #4a8fc1; }
+        .tile.tipo-imagem { border-left-color: #4caf50; }
+        .tile.tipo-audio { border-left-color: #ff9800; }
+        .tile.tipo-video { border-left-color: #9c27b0; }
+        .tile.tipo-pdf { border-left-color: #e74c3c; }
+        .tile.tipo-link { border-left-color: #ff5722; }
+        .tile.tipo-poemario { border-left-color: #ffecb3; border: 2px solid #ffecb3; box-shadow: 0 0 30px rgba(212,175,106,0.4); }
+        .tile.is-overlay {
+            border-top: 3px solid #ff9800;
+            background: rgba(255, 152, 0, 0.08);
+        }
+        .tile.highlight {
+            box-shadow: 0 0 20px rgba(212, 175, 106, 0.8) !important;
+            border-color: #ffecb3 !important;
+        }
+        .tile.current {
+            border: 3px solid #ffecb3 !important;
+            box-shadow: 0 0 40px rgba(212, 175, 106, 0.6) !important;
+            transform: scale(1.02);
+        }
+
+        .tile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; flex-wrap: wrap; gap:0.2rem; }
+        .tile-type { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
+        .tile-actions-top { display: flex; gap: 0.2rem; flex-wrap: wrap; }
+        .tile-actions-top button {
+            background: transparent; border: none; color: #f0ece3; cursor: pointer;
+            font-size: 0.6rem; opacity: 0.6; transition: 0.2s; padding: 0.1rem 0.3rem;
+        }
+        .tile-actions-top button:hover { opacity: 1; background: rgba(255,255,255,0.05); border-radius: 4px; }
+        .tile-title { font-weight: 600; font-size: 1rem; color: #ffecb3; margin-bottom: 0.3rem; word-break: break-word; }
+        .tile-content {
+            font-size: 0.85rem; line-height: 1.4; color: #e0d6c5;
+            white-space: pre-wrap; word-break: break-word;
+            flex-grow: 1; max-height: 220px; overflow-y: auto; margin-bottom: 0.4rem;
+        }
+        .tile-content img { max-width: 100%; border-radius: 8px; margin: 0.3rem 0; }
+        .tile-content audio { width: 100%; margin: 0.3rem 0; }
+        .tile-content video { max-width: 100%; border-radius: 8px; margin: 0.3rem 0; }
+        .pdf-preview {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,255,255,0.05); padding: 0.4rem;
+            border-radius: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .pdf-preview:hover { background: rgba(255,255,255,0.1); }
+        .link-preview {
+            border: 1px solid #b88b4a;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+            transition: 0.2s;
+        }
+        .link-preview:hover { transform: scale(1.01); }
+        .btn-expand-text {
+            background: transparent; border: 1px solid #b88b4a; color: #f0ece3;
+            padding: 0.1rem 0.5rem; border-radius: 12px; cursor: pointer;
+            font-size: 0.55rem; transition: 0.2s; margin-top: 0.3rem; align-self: flex-start;
+        }
+        .btn-expand-text:hover { background: rgba(212, 175, 106, 0.2); }
+        .tile-footer {
+            display: flex; flex-wrap: wrap; gap: 0.3rem;
+            border-top: 1px solid rgba(255,215,150,0.15);
+            padding-top: 0.4rem; margin-top: 0.2rem;
+            justify-content: space-between;
+        }
+        .tile-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+        .tile-tags span { background: rgba(212, 175, 106, 0.2); padding: 0.05rem 0.5rem; border-radius: 12px; font-size: 0.6rem; color: #d4af6a; }
+        .tile-actions-bottom { display: flex; gap: 0.2rem; flex-wrap: wrap; }
+        .tile-actions-bottom button {
+            background: transparent; border: 1px solid #b88b4a; color: #f0ece3;
+            padding: 0.15rem 0.5rem; border-radius: 12px; cursor: pointer;
+            font-size: 0.55rem; transition: 0.2s;
+        }
+        .tile-actions-bottom button:hover { background: rgba(212, 175, 106, 0.2); }
+        .btn-upload { background: #4a7c3a !important; border-color: #4a7c3a !important; }
+
+        .tile-messages { margin-top: 0.5rem; border-top: 1px solid rgba(255,215,150,0.15); padding-top: 0.4rem; }
+        .messages-title { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; margin-bottom: 0.3rem; }
+        .message-item {
+            display: flex; align-items: center; gap: 0.4rem;
+            background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem;
+            border-radius: 12px; font-size: 0.65rem; margin-bottom: 0.2rem;
+        }
+        .message-item .message-time { font-size: 0.5rem; opacity: 0.4; margin-left: auto; }
+        .message-item .btn-delete-msg {
+            background: transparent; border: none; color: #f0ece3;
+            cursor: pointer; font-size: 0.6rem; opacity: 0.3; transition: 0.2s;
+        }
+        .message-item .btn-delete-msg:hover { opacity: 1; }
+        .tile-message-input { display: flex; gap: 0.3rem; margin-top: 0.3rem; }
+        .tile-message-input input {
+            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,150,0.2);
+            border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.65rem;
+            color: #f0ece3; outline: none;
+        }
+        .tile-message-input input::placeholder { color: rgba(255,255,255,0.3); }
+        .tile-message-input input:focus { border-color: #d4af6a; }
+        .tile-message-input button {
+            background: #4a3724; border: none; color: #f0ece3;
+            padding: 0.2rem 0.6rem; border-radius: 12px; cursor: pointer; font-size: 0.6rem;
+        }
+        .tile-message-input button:hover { background: #6e4f32; }
+
+        .global-actions {
+            display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem; align-items: center;
+        }
+        .global-actions button {
+            background: #4a3724; border: none; color: #f5e6d3;
+            padding: 0.4rem 1rem; border-radius: 30px; cursor: pointer; font-size: 0.75rem; transition: 0.2s;
+        }
+        .global-actions button:hover { background: #6e4f32; transform: scale(1.02); }
+        .global-actions .btn-primary { background: #b88b4a; color: #1a1612; font-weight: 600; }
+        .global-actions .btn-primary:hover { background: #d4af6a; }
+        .global-actions .btn-secondary { background: #3a5a7c; }
+        .global-actions .btn-secondary:hover { background: #4a7a9c; }
+        .file-input-hidden { display: none; }
+
+        .modal-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
+            z-index: 1000; padding: 1rem;
+        }
+        .modal-card {
+            background: #2c241a; padding: 1.5rem; border-radius: 24px;
+            width: 100%; max-width: 550px; border: 1px solid #ca9e5c;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-card h3 { color: #ffecb3; margin-bottom: 1rem; }
+        .modal-card input, .modal-card textarea, .modal-card select {
+            width: 100%; background: #1f1a14; border: 1px solid #b88b4a; color: #f0ece3;
+            padding: 0.6rem; border-radius: 10px; font-family: inherit; font-size: 0.9rem; margin-bottom: 0.8rem;
+        }
+        .modal-card textarea { min-height: 80px; resize: vertical; }
+        .modal-card .expanded-text {
+            white-space: pre-wrap; margin: 1rem 0; max-height: 400px; overflow-y: auto;
+            background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 8px;
+            font-size: 0.9rem; color: #e0d6c5;
+        }
+        .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap; }
+        .modal-actions button { padding: 0.5rem 1.2rem; border: none; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .modal-actions .btn-cancel { background: #4a3724; color: #f0ece3; }
+        .modal-actions .btn-save { background: #b88b4a; color: #1a1612; font-weight: 600; }
+        .modal-actions .btn-secondary { background: #3a5a7c; color: #fff; }
+        .modal-actions .btn-secondary:hover { background: #4a7a9c; }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 22, 18, 0.95);
+            color: #f0ece3;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            border: 1px solid #d4af6a;
+            max-width: 80%;
+            z-index: 1000;
+            font-size: 0.9rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header-left h1 { font-size: 1.3rem; }
+            .agents-bar { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            .agent-enheduanna { border-left: none; padding-left: 0; }
+            .mosaic-grid { grid-template-columns: 1fr; }
+        }
+        footer { text-align: center; font-size: 0.7rem; opacity: 0.5; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <div class="header-left">
+            <h1>✨ ENHEDUANNA</h1>
+            <span class="sub">nanna_0-3 · mosaico intertextual</span>
+            <span class="save-indicator" id="saveIndicator">✅ Guardado</span>
+        </div>
+        <div class="header-actions">
+            <button class="mode-btn active" data-mode="alicatado">⚙️ Alicatado</button>
+            <button class="mode-btn" data-mode="caleidoscopio">🌀 Caleidoscópio</button>
+            <button class="mode-btn" data-mode="livre">🖐️ Livre</button>
+        </div>
+    </div>
+
+    <!-- AGENTES -->
+    <div class="agents-bar">
+        <div class="agent" id="agentEnheduanna">
+            <div class="agent-avatar" id="enheduannaAvatar" title="Clique para ativar Enheduanna (mediação)">
+                <img id="enheduannaImg" src="" style="display:none;">
+                <span class="placeholder" id="enheduannaPlaceholder">📜</span>
+            </div>
+            <div class="agent-info">
+                <div class="label">Enheduanna · Mediadora</div>
+                <div class="status" id="enheduannaStatus">a tecer conexões</div>
+                <button class="btn-upload-agent" data-agent="enheduanna">📷 Carregar</button>
+            </div>
+        </div>
+
+        <div class="agent" id="agentWanderer">
+            <div class="agent-avatar" id="wandererAvatar" title="Clique para ativar Wanderer (caminhante)">
+                <img id="wandererImg" src="" style="display:none;">
+                <span class="placeholder" id="wandererPlaceholder">🚶</span>
+            </div>
+            <div class="agent-info">
+                <div class="label">Wanderer · Caminhante</div>
+                <div class="status" id="wandererStatus">percorrendo o mosaico</div>
+                <button class="btn-upload-agent" data-agent="wanderer">📷 Carregar</button>
+            </div>
+        </div>
+
+        <div class="agent" id="agentOgum">
+            <div class="agent-avatar" id="ogumAvatar" title="Clique para ativar Ogum (inventor)">
+                <img id="ogumImg" src="" style="display:none;">
+                <span class="placeholder" id="ogumPlaceholder">⚔️</span>
+            </div>
+            <div class="agent-info">
+                <div class="label">Ogum · Inventor</div>
+                <div class="status" id="ogumStatus">ferramentas e prompts</div>
+                <button class="btn-upload-agent" data-agent="ogum">📷 Carregar</button>
+            </div>
+        </div>
+
+        <div class="agent agent-enheduanna">
+            <div class="suggestion" id="suggestionText">💡 "Ligue 'Metal fundente' à cena da praia?"</div>
+        </div>
+    </div>
+
+    <!-- MOSAICO -->
+    <div id="mosaic" class="mosaic-grid"></div>
+
+    <!-- AÇÕES -->
+    <div class="global-actions">
+        <button id="btnAddTile" class="btn-primary">➕ Novo azulejo</button>
+        <button id="btnReset">⟳ Restaurar</button>
+        <button id="btnNewMosaic">🔄 Novo mosaico</button>
+        <button id="btnRecover" class="btn-secondary">↩️ Recuperar anterior</button>
+        <button id="btnToggleInactive">👁️ Inativos</button>
+        <button id="btnExport" class="btn-primary">📤 Exportar JSON</button>
+        <button id="btnImport" class="btn-secondary">📥 Importar JSON</button>
+        <input type="file" id="fileInputImport" class="file-input-hidden" accept=".json">
+        <button id="btnSaveVersion" class="btn-primary">💾 Guardar versão</button>
+        <button id="btnListVersions" class="btn-secondary">📋 Versões</button>
+        <button id="btnShare" class="btn-primary">📨 Partilhar</button>
+        <button id="btnMerge" class="btn-primary">🔗 Fundir tiles</button>
+        <button id="btnActivateTile" class="btn-secondary">✨ Ativar tile</button>
+    </div>
+
+    <footer>Enheduanna · nanna_0-3 · 2025 · Clique nos agentes para ativar funções</footer>
+</div>
+
+<script>
+// ============================================================
+//  VERSÃO: nanna_0-3
+//  URL do Google Apps Script (atualizar após deploy)
+// ============================================================
+const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbx6O1sbs5QbaoUjmFkxU83I_ZColYPcKTvTtEHGvf2zcXFoFMDscjJ9DELBqqGpzoAW/exec';
+
+// ============================================================
+//  MATRIZ INICIAL (6 tiles + links, apenas t0 ativa)
+// ============================================================
+const INITIAL_TILES = [
+    {
+        id: 't0',
+        title: '✨ You are Welcome to Elsinore',
+        content: 'Clique para abrir o Poemário Enheduanna',
+        type: 'poemario',
+        tags: ['portal', 'enheduanna', 'Cesariny'],
+        isCentral: true,
+        active: true,
+        createdBy: 'Enheduanna',
+        createdAt: new Date().toISOString(),
+        origin: { type: 'mixed', createdBy: 'Enheduanna' },
+        permissions: { canView: { type: 'public' }, canEdit: ['Enheduanna'], canDelete: ['Enheduanna'] },
+        files: [],
+        messages: [],
+        history: [],
+        contributors: ['Enheduanna']
+    },
+    {
+        id: 't1',
+        title: '🌊 1. Entre nós e as palavras',
+        content: `Entre nós e as palavras há metal fundente\nentre nós e as palavras há hélices que andam\ne podem dar-nos morte     violar-nos     tirar\ndo mais fundo de nós o mais útil segredo\nentre nós e as palavras há perfis ardentes\nespaços cheios de gente de costas\naltas flores venenosas     portas por abrir\ne escadas e ponteiros e crianças sentadas\nà espera do seu tempo e do seu precipício`,
+        type: 'texto',
+        tags: ['Cesariny', 'metal', 'hélices'],
+        active: false,
+        createdBy: 'Enheduanna',
+        createdAt: new Date().toISOString(),
+        origin: { type: 'literatura', author: 'Cesariny' },
+        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
+        files: [],
+        messages: [],
+        history: [],
+        contributors: ['Enheduanna']
+    },
+    {
+        id: 't2',
+        title: '🏛️ 2. Ao longo da muralha',
+        content: `Ao longo da muralha que habitamos\nhá palavras de vida     há palavras de morte\nhá palavras imensas, que esperam por nós\ne outras, frágeis, que deixaram de esperar\nhá palavras acesas como barcos\ne há palavras homens, palavras que guardam\no seu segredo e a sua posição`,
+        type: 'texto',
+        tags: ['Cesariny', 'muralha', 'vida', 'morte'],
+        active: false,
+        createdBy: 'Enheduanna',
+        createdAt: new Date().toISOString(),
+        origin: { type: 'literatura', author: 'Cesariny' },
+        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
+        files: [],
+        messages: [],
+        history: [],
+        contributors: ['Enheduanna']
+    },
+    {
+        id: 't3',
+        title: '🤲 3. Mãos de Elsinore',
+        content: `Entre nós e as palavras, surdamente,\nas mãos e as paredes de Elsinore`,
+        type: 'texto',
+        tags: ['Cesariny', 'Elsinore', 'mãos'],
+        active: false,
+        createdBy: 'Enheduanna',
+        createdAt: new Date().toISOString(),
+        origin: { type: 'literatura', author: 'Cesariny' },
+        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
+        files: [],
+        messages: [],
+        history: [],
+        contributors: ['Enheduanna']
+    },
+    {
+        id: 't4',
+        title: '💎 4. Palavras diamantes',
+        content: `E há palavras nocturnas palavras gemidos\npalavras que nos sobem ilegíveis à boca\npalavras diamantes palavras nunca escritas\npalavras impossíveis de escrever\npor não termos connosco cordas de violinos\nnem todo o sangue do mundo nem todo o amplexo do ar\ne os braços dos amantes escrevem muito alto\nmuito além do azul onde oxidados morrem\npalavras maternais só sombra só soluço\nsó espasmos só amor só solidão desfeita`,
+        type: 'texto',
+        tags: ['Cesariny', 'diamantes', 'nocturnas'],
+        active: false,
+        createdBy: 'Enheduanna',
+        createdAt: new Date().toISOString(),
+        origin: { type: 'literatura', author: 'Cesariny' },
+        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
+        files: [],
+        messages: [],
+        history: [],
+        contributors: ['Enheduanna']
+    },
+    {
+        id: 't5',
+        title: '⚔️ 5. O nosso dever falar',
+        content: `Entre nós e as palavras, os emparedados\ne entre nós e as palavras, o nosso dever falar`,
+        type: 'texto',
+        tags: ['Cesariny', 'dever', 'falar'],
+        active: false,
+        createdBy: 'Enheduanna',
+        createdAt: new Date().toISOString(),
+        origin: { type: 'literatura', author: 'Cesariny' },
+        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
+        files: [],
+        messages: [],
+        history: [],
+        contributors: ['Enheduanna']
+    }
+];
+
+// ============================================================
+//  ESTADO
+// ============================================================
+let tiles = [];
+let showInactive = true;
+let agentImages = { enheduanna: '', wanderer: '', ogum: '' };
+let currentTileId = null;
+let wandererLogs = [];
+let currentUserName = null;
+
+// ============================================================
+//  UTILIZADOR
+// ============================================================
+function getUserId() {
+    let userId = localStorage.getItem('enheduanna_user_id');
+    if (!userId) {
+        userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+        localStorage.setItem('enheduanna_user_id', userId);
+    }
+    return userId;
+}
+
+function getUserName() {
+    if (currentUserName) return currentUserName;
+    let userName = localStorage.getItem('enheduanna_user_name');
+    if (!userName) {
+        return 'Guest';
+    }
+    return userName;
+}
+
+function setUserName(name) {
+    currentUserName = name;
+    localStorage.setItem('enheduanna_user_name', name);
+}
+
+function isGuest() {
+    return getUserName() === 'Guest' || !getUserName();
+}
+
+function ensureUserIdentity() {
+    if (isGuest()) {
+        showNotification('👤 Por favor, escolhe um nome para interagir.');
+        showUserDropdown();
+        return false;
+    }
+    return true;
+}
+
+// ============================================================
+//  DROPDOWN DE UTILIZADORES
+// ============================================================
+function showUserDropdown() {
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+        <div class="modal-card" style="max-width:350px; text-align:center;">
+            <h3>👤 Quem és?</h3>
+            <p style="color:#e0d6c5; margin-bottom:1rem;">Escolhe o teu nome para começar.</p>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                <button class="btn-user" data-name="Enheduanna" style="padding:0.8rem; background:#b88b4a; border:none; border-radius:12px; color:#1a1612; font-weight:600; cursor:pointer;">📜 Enheduanna</button>
+                <button class="btn-user" data-name="Gisela" style="padding:0.8rem; background:#b88b4a; border:none; border-radius:12px; color:#1a1612; font-weight:600; cursor:pointer;">✨ Gisela</button>
+                <button id="btnCustomUser" style="padding:0.8rem; background:transparent; border:1px solid #b88b4a; border-radius:12px; color:#f0ece3; cursor:pointer; font-size:0.9rem;">
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelectorAll('.btn-user').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const name = this.dataset.name;
+            setUserName(name);
+            modal.remove();
+            showNotification(`👤 Bem-vindo(a), ${name}!`);
+            updateUserDisplay();
+            renderMosaic();
+        });
+    });
+
+    modal.querySelector('#btnCustomUser').addEventListener('click', function() {
+        const customName = prompt('👤 Como queres ser chamado?');
+        if (customName && customName.trim()) {
+            setUserName(customName.trim());
+            modal.remove();
+            showNotification(`👤 Bem-vindo(a), ${customName.trim()}!`);
+            updateUserDisplay();
+            renderMosaic();
+        }
+    });
+}
+
+function updateUserDisplay() {
+    const name = getUserName();
+    const displayEl = document.getElementById('userDisplay');
+    if (displayEl) {
+        displayEl.textContent = `👤 ${name}`;
+    }
+}
+
+// ============================================================
+//  PERSISTÊNCIA
+// ============================================================
+function showSaved() {
+    const el = document.getElementById('saveIndicator');
+    if (!el) return;
+    el.classList.add('show');
+    clearTimeout(el._timeout);
+    el._timeout = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function saveToLocalStorage() {
+    try {
+        localStorage.setItem('enheduanna_mosaic', JSON.stringify(tiles));
+        localStorage.setItem('enheduanna_agents', JSON.stringify(agentImages));
+        localStorage.setItem('enheduanna_currentTile', currentTileId || '');
+        localStorage.setItem('enheduanna_wanderer', JSON.stringify(wandererLogs));
+        showSaved();
+    } catch(e) {
+        console.warn('Erro ao guardar:', e);
+    }
+}
+
+function loadFromLocalStorage() {
+    const stored = localStorage.getItem('enheduanna_mosaic');
+    if (stored) {
+        try {
+            tiles = JSON.parse(stored);
+            tiles.forEach(t => { if (!t.messages) t.messages = []; if (!t.files) t.files = []; });
+            const currentId = localStorage.getItem('enheduanna_currentTile');
+            if (currentId) currentTileId = currentId;
+            const logs = localStorage.getItem('enheduanna_wanderer');
+            if (logs) wandererLogs = JSON.parse(logs);
+            return true;
+        } catch(e) {}
+    }
+    return false;
+}
+
+// ============================================================
+//  CARREGAR MOSAICO
+// ============================================================
+function loadMosaic() {
+    if (loadFromLocalStorage()) {
+        renderMosaic();
+        return;
+    }
+    tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
+    saveToLocalStorage();
+    renderMosaic();
+}
+
+// ============================================================
+//  TILE ATUAL
+// ============================================================
+function setCurrentTile(tileId) {
+    const tile = tiles.find(t => t.id === tileId);
+    if (!tile) return;
+    currentTileId = tileId;
+    document.querySelectorAll('.tile').forEach(el => el.classList.remove('current'));
+    const tileEl = document.querySelector(`.tile[data-id="${tileId}"]`);
+    if (tileEl) tileEl.classList.add('current');
+    document.getElementById('wandererStatus').textContent = `📌 em "${tile.title}"`;
+    saveToLocalStorage();
+}
+
+function getCurrentTile() {
+    if (!currentTileId) return null;
+    return tiles.find(t => t.id === currentTileId);
+}
+
+function hasCurrentTile() {
+    return currentTileId !== null && getCurrentTile() !== null;
+}
+
+// ============================================================
+//  NOTIFICAÇÕES
+// ============================================================
+function showNotification(message, duration = 5000) {
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+    const notif = document.createElement('div');
+    notif.className = 'notification';
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+        notif.style.opacity = '0';
+        notif.style.transition = 'opacity 0.5s';
+        setTimeout(() => notif.remove(), 500);
+    }, duration);
+}
+
+// ============================================================
+//  LOGS E DOCUMENTAÇÃO
+// ============================================================
+function logAction(action, tileId, details) {
+    const userName = getUserName();
+    const logEntry = {
+        action: action,
+        user: userName,
+        userId: getUserId(),
+        tileId: tileId || null,
+        details: details || {},
+        timestamp: new Date().toISOString()
+    };
+    const history = JSON.parse(localStorage.getItem('enheduanna_action_history') || '[]');
+    history.push(logEntry);
+    localStorage.setItem('enheduanna_action_history', JSON.stringify(history));
+    if (tileId) {
+        const tile = tiles.find(t => t.id === tileId);
+        if (tile) {
+            if (!tile.history) tile.history = [];
+            tile.history.push(logEntry);
+            saveToLocalStorage();
+        }
+    }
+    return logEntry;
+}
+
+// ============================================================
+//  PERMISSÕES
+// ============================================================
+function canViewTile(tileId, userName) {
+    const tile = tiles.find(t => t.id === tileId);
+    if (!tile) return false;
+    if (!tile.permissions) return true;
+    const perms = tile.permissions.canView;
+    if (!perms) return true;
+    if (perms.type === 'public') return true;
+    if (perms.type === 'private') return tile.createdBy === userName;
+    if (perms.type === 'restricted') {
+        if (perms.users && perms.users.includes(userName)) return true;
+        return false;
+    }
+    return true;
+}
+
+function canEditTile(tileId, userName) {
+    if (isGuest()) return false;
+    const tile = tiles.find(t => t.id === tileId);
+    if (!tile) return false;
+    if (tile.createdBy === userName) return true;
+    if (tile.permissions?.canEdit?.includes(userName)) return true;
+    return false;
+}
+
+function canDeleteTile(tileId, userName) {
+    const tile = tiles.find(t => t.id === tileId);
+    if (!tile) return false;
+    if (tile.permissions?.canDelete?.includes(userName)) return true;
+    return false;
+}
+
+// ============================================================
+//  ATIVAR TILE (apenas Enheduanna)
+// ============================================================
+function activateTile(tileId) {
+    const tile = tiles.find(t => t.id === tileId);
+    if (!tile) return;
+    const userName = getUserName();
+    if (userName !== 'Enheduanna') {
+        showNotification('❌ Apenas a Enheduanna pode ativar tiles.');
+        return;
+    }
+    if (tile.active === true) {
+        showNotification(`ℹ️ A tile "${tile.title}" já está ativa.`);
+        return;
+    }
+    tile.active = true;
+    tile.history.push({ action: 'activate', by: userName, timestamp: new Date().toISOString() });
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('activate_tile', tileId, { by: userName });
+    showNotification(`✅ Tile "${tile.title}" ativada.`);
+}
+
+// ============================================================
+//  UPLOAD PARA GOOGLE DRIVE (com proxy CORS e getFileTypeFromMime)
+// ============================================================
+function getFileTypeFromMime(mimeType) {
+    if (mimeType.startsWith('image/')) return 'image';
+    if (mimeType.startsWith('audio/')) return 'audio';
+    if (mimeType.startsWith('video/')) return 'video';
+    if (mimeType === 'application/pdf') return 'pdf';
+    if (mimeType.includes('epub')) return 'epub';
+    return 'other';
+}
+
+async function uploadToDrive(base64Data, fileName, fileMimeType, type, alias) {
+    
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6O1sbs5QbaoUjmFkxU83I_ZColYPcKTvTtEHGvf2zcXFoFMDscjJ9DELBqqGpzoAW/exec';
+    
+     return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = async function(evt) {
+            const base64Data = evt.target.result; // data:image/png;base64,iVBOR...
+            const fileName = customFileName || fileOrBlob.name || `enheduanna_${Date.now()}`;
+            const mimeType = fileOrBlob.type || 'application/octet-stream';
+            
+            try {
+                const result = await uploadParaEnheduannaDrive(base64Data, fileName, mimeType, type, alias);
+                resolve(result);
+            } catch (err) {
+                reject(err);
+            }
+        };
+        
+        reader.onerror = function(err) {
+            reject(new Error('Erro ao ler ficheiro: ' + err));
+        };
+        
+        reader.readAsDataURL(fileOrBlob);
+    });
+}
+
+// ============================================================
+//  CRUD BÁSICO
+// ============================================================
+function generateId() { return Date.now() + '-' + Math.random().toString(36).substr(2, 6); }
+
+function addTile(title='', content='', type='texto', tags=[]) {
+    if (isGuest()) {
+        showNotification('👤 Por favor, escolhe um nome para criar tiles.');
+        return;
+    }
+    const tile = {
+        id: generateId(),
+        title: title.trim() || 'Novo azulejo',
+        content: content.trim() || 'Escreva aqui...',
+        type: type,
+        tags: tags || [],
+        active: true,
+        files: [],
+        messages: [],
+        createdBy: getUserName(),
+        createdAt: new Date().toISOString(),
+        origin: { type: 'autoral', createdBy: getUserName() },
+        contributors: [getUserName()],
+        permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
+        history: [{ action: 'create', by: getUserName(), timestamp: new Date().toISOString() }]
+    };
+    tiles.push(tile);
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('create_tile', tile.id, { title: tile.title, type: tile.type });
+    setCurrentTile(tile.id);
+}
+
+function duplicateTile(id) {
+    if (isGuest()) {
+        showNotification('👤 Por favor, escolhe um nome para duplicar tiles.');
+        return;
+    }
+    const original = tiles.find(t => t.id === id);
+    if (!original) return;
+    const newTile = {
+        ...original,
+        id: generateId(),
+        title: original.title + ' (cópia)',
+        files: original.files ? original.files.map(f => ({ ...f, id: generateId() })) : [],
+        messages: [],
+        createdBy: getUserName(),
+        createdAt: new Date().toISOString(),
+        origin: { type: 'copia', createdBy: getUserName(), sourceTiles: [original.id] },
+        contributors: [getUserName()],
+        permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
+        history: [{ action: 'copy', by: getUserName(), from: original.id, timestamp: new Date().toISOString() }]
+    };
+    tiles.push(newTile);
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('copy_tile', newTile.id, { from: original.id });
+}
+
+function deleteTile(id) {
+    if (isGuest()) {
+        showNotification('👤 Por favor, escolhe um nome para eliminar tiles.');
+        return;
+    }
+    if (!confirm('Remover este azulejo?')) return;
+    const tile = tiles.find(t => t.id === id);
+    if (!canDeleteTile(id, getUserName())) {
+        showNotification('❌ Não tens permissão para eliminar esta tile.');
+        return;
+    }
+    tiles = tiles.filter(t => t.id !== id);
+    if (currentTileId === id) currentTileId = null;
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('delete_tile', id, { title: tile?.title });
+}
+
+function toggleActive(id) {
+    const tile = tiles.find(t => t.id === id);
+    if (tile) { tile.active = !tile.active; saveToLocalStorage(); renderMosaic(); }
+}
+
+function editTile(id, newTitle, newContent, newType, newTags) {
+    if (isGuest()) {
+        showNotification('👤 Por favor, escolhe um nome para editar tiles.');
+        return;
+    }
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    if (!canEditTile(id, getUserName())) {
+        showNotification('❌ Não tens permissão para editar esta tile.');
+        return;
+    }
+    if (newTitle !== undefined) tile.title = newTitle;
+    if (newContent !== undefined) tile.content = newContent;
+    if (newType !== undefined) tile.type = newType;
+    if (newTags !== undefined) tile.tags = newTags;
+    if (!tile.contributors.includes(getUserName())) {
+        tile.contributors.push(getUserName());
+    }
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('edit_tile', id, { title: tile.title });
+}
+
+function splitTile(id) {
+    const original = tiles.find(t => t.id === id);
+    if (!original) return;
+    if (!original.files || original.files.length < 2) {
+        showNotification('❌ Este tile tem menos de 2 ficheiros para dividir.');
+        return;
+    }
+    tiles = tiles.filter(t => t.id !== id);
+    original.files.forEach((file, index) => {
+        const newTile = {
+            id: generateId(),
+            title: `${original.title} (${file.type})`,
+            content: original.content || '',
+            type: file.type === 'image' ? 'imagem' : file.type === 'audio' ? 'audio' : file.type === 'video' ? 'video' : file.type === 'pdf' ? 'pdf' : 'texto',
+            tags: [...original.tags, 'split'],
+            active: true,
+            files: [{ ...file }],
+            messages: [],
+            createdBy: getUserName(),
+            createdAt: new Date().toISOString(),
+            origin: { type: 'reducao', createdBy: getUserName(), sourceTiles: [original.id] },
+            contributors: [getUserName()],
+            permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
+            history: [{ action: 'split', by: getUserName(), from: original.id, timestamp: new Date().toISOString() }],
+            isSplit: true,
+            splitFrom: original.id
+        };
+        tiles.push(newTile);
+    });
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('split_tile', null, { from: original.id, into: tiles.filter(t => t.splitFrom === original.id).map(t => t.id) });
+    showNotification(`✅ Tile dividido em ${original.files.length} partes.`);
+}
+
+function copyTileWithOverlay(id) {
+    const original = tiles.find(t => t.id === id);
+    if (!original) return;
+    const newTile = {
+        ...original,
+        id: generateId(),
+        title: original.title + ' (sobre)',
+        files: original.files ? original.files.map(f => ({ ...f, id: generateId() })) : [],
+        messages: [],
+        createdBy: getUserName(),
+        createdAt: new Date().toISOString(),
+        origin: { type: 'colagem', createdBy: getUserName(), sourceTiles: [original.id] },
+        contributors: [getUserName()],
+        permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
+        history: [{ action: 'overlay', by: getUserName(), from: original.id, timestamp: new Date().toISOString() }],
+        isOverlay: true,
+        overlayOf: original.id
+    };
+    tiles.push(newTile);
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('overlay_tile', newTile.id, { from: original.id });
+}
+
+// ============================================================
+//  MENSAGENS
+// ============================================================
+function addMessageToTile(id, message) {
+    if (isGuest()) {
+        showNotification('👤 Por favor, escolhe um nome para comentar.');
+        return;
+    }
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    if (!tile.messages) tile.messages = [];
+    tile.messages.push({
+        id: Date.now()+'-'+Math.random().toString(36).substr(2,4),
+        userName: getUserName(),
+        text: message.trim(),
+        timestamp: new Date().toLocaleString()
+    });
+    saveToLocalStorage();
+    renderMosaic();
+    logAction('add_message', id, { message: message });
+}
+
+function deleteMessageFromTile(tileId, msgId) {
+    const tile = tiles.find(t => t.id === tileId);
+    if (!tile || !tile.messages) return;
+    tile.messages = tile.messages.filter(m => m.id !== msgId);
+    saveToLocalStorage();
+    renderMosaic();
+}
+
+// ============================================================
+//  EXPANDIR TEXTO
+// ============================================================
+function expandText(id) {
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+        <div class="modal-card" style="max-width:600px;">
+            <h3>${escapeHtml(tile.title)}</h3>
+            <div class="expanded-text">${escapeHtml(tile.content)}</div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modalClose">Fechar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector('#modalClose').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
+
+// ============================================================
+//  POEMÁRIO
+// ============================================================
+function openPoemario() {
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.style.background = 'rgba(0,0,0,0.9)';
+    const palavras = [
+        ['bem-vindo', 'bem-vinda', 'acolhido', 'acolhida'],
+        ['Elsinore', 'Alhambra', 'Cascais', 'Berlim'],
+        ['Enheduanna', 'Cesariny', 'Cortázar', 'Lorca'],
+        ['poema', 'mosaico', 'teia', 'fragmento'],
+        ['luz', 'sombra', 'eco', 'silêncio']
+    ];
+    function gerarPoema() {
+        const p1 = palavras[0][Math.floor(Math.random() * palavras[0].length)];
+        const p2 = palavras[1][Math.floor(Math.random() * palavras[1].length)];
+        const p3 = palavras[2][Math.floor(Math.random() * palavras[2].length)];
+        const p4 = palavras[3][Math.floor(Math.random() * palavras[3].length)];
+        const p5 = palavras[4][Math.floor(Math.random() * palavras[4].length)];
+        return `${p1} em ${p2},\n${p3} tece um ${p4} de ${p5}.`;
+    }
+    let poemaAtual = gerarPoema();
+    modal.innerHTML = `
+        <div class="modal-card" style="max-width:500px; text-align:center; background: rgba(26,22,18,0.95); border: 2px solid #d4af6a; border-radius: 20px; padding: 2rem; position: relative;">
+            <button id="fecharPoemario" style="position:absolute;top:10px;right:15px;background:transparent;border:none;color:#f0ece3;font-size:1.5rem;cursor:pointer;">✕</button>
+            <div style="font-size:1.2rem; color: #ffecb3; letter-spacing: 3px; margin-bottom: 1rem;">
+                ✦ You are welcome to Elsinore ✦
+            </div>
+            <div style="font-size:2.5rem; color: #d4af6a; font-family: 'Georgia', serif; margin-bottom: 0.5rem;">
+                Enheduanna
+            </div>
+            <div style="font-size:1.2rem; color: #e0d6c5; padding: 1.5rem 0; border-top: 1px solid rgba(212,175,106,0.3); border-bottom: 1px solid rgba(212,175,106,0.3); min-height: 120px; white-space: pre-wrap; line-height: 2;">
+                ${poemaAtual}
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button id="gerarNovoPoema" style="background: #b88b4a; border: none; color: #1a1612; padding: 0.5rem 1.5rem; border-radius: 20px; cursor: pointer; font-weight: 600;">
+                    🌀 Gerar novo poema
+                </button>
+                <button id="guardarPoema" style="background: #4a7c3a; border: none; color: #fff; padding: 0.5rem 1.5rem; border-radius: 20px; cursor: pointer;">
+                    💾 Guardar este poema
+                </button>
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.7rem; opacity: 0.4;">
+                Clique no tile central para voltar ao mosaico
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector('#fecharPoemario').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    modal.querySelector('#gerarNovoPoema').addEventListener('click', function() {
+        poemaAtual = gerarPoema();
+        const contentDiv = modal.querySelector('.modal-card div:nth-child(4)');
+        contentDiv.textContent = poemaAtual;
+    });
+    modal.querySelector('#guardarPoema').addEventListener('click', function() {
+        const tile = tiles.find(t => t.isCentral === true);
+        if (tile) {
+            addMessageToTile(tile.id, `📝 Poema gerado:\n${poemaAtual}`);
+            showNotification('✅ Poema guardado como mensagem no tile central!');
+        } else {
+            showNotification('❌ Tile central não encontrado.');
+        }
+        modal.remove();
+    });
+}
+
+// ============================================================
+//  AGENTES - AÇÕES
+// ============================================================
+function generateSuggestions(tile) {
+    const tags = tile.tags || [];
+    const content = tile.content || '';
+    const suggestions = [
+        `"${tile.title}" pode ligar-se a um bloco sobre exílio.`,
+        `Este bloco contém "${content.substring(0,30)}..." — talvez ligue a uma imagem.`,
+        `Que tal gerar um mini-resumo sobre "${tile.title}"?`,
+        `A palavra "${tags[0] || 'conceito'}" aparece noutros blocos.`,
+        `Este bloco poderia beneficiar de uma paisagem sonora.`,
+    ];
+    return suggestions[Math.floor(Math.random() * suggestions.length)];
+}
+
+function highlightTile(id) {
+    document.querySelectorAll('.tile.highlight').forEach(el => el.classList.remove('highlight'));
+    document.querySelectorAll('.tile').forEach(el => {
+        if (el.dataset.id === id) {
+            el.classList.add('highlight');
+        }
+    });
+    setTimeout(() => {
+        document.querySelectorAll('.tile.highlight').forEach(el => el.classList.remove('highlight'));
+    }, 5000);
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function renderMosaic() {
+    const container = document.getElementById('mosaic');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const visible = tiles.filter(t => showInactive || t.active !== false);
+    visible.forEach(tile => {
+        const div = document.createElement('div');
+        div.className = `tile tipo-${tile.type}`;
+        if (tile.active === false) div.classList.add('inactive');
+        if (tile.isOverlay) div.classList.add('is-overlay');
+        if (tile.isCentral) div.classList.add('tipo-poemario', 'central');
+        div.dataset.id = tile.id;
+
+        const tagsHtml = (tile.tags||[]).map(t => `<span>#${t}</span>`).join('');
+
+        let contentHtml = '';
+
+        if (tile.type === 'poemario') {
+            contentHtml = `
+                <div style="text-align:center; padding:0.5rem; border:2px solid #d4af6a; border-radius:12px; background:rgba(212,175,106,0.05);">
+                    <div style="font-size:2rem; color:#ffecb3;">✨</div>
+                    <div style="font-size:1.2rem; color:#ffecb3; font-family:'Georgia',serif; margin:0.5rem 0;">
+                        You are Welcome to<br>Elsinore
+                    </div>
+                    <div style="font-size:0.8rem; color:#d4af6a; opacity:0.7;">
+                        Enheduanna
+                    </div>
+                    <div style="font-size:0.6rem; color:#888; margin-top:0.5rem;">
+                        ⚡ Clique para abrir o Poemário
+                    </div>
+                </div>
+            `;
+        } else if (tile.type === 'link' && tile.linkUrl) {
+            let previewImage = '';
+            if (tile.linkImage) {
+                previewImage = `<img src="${tile.linkImage}" alt="${escapeHtml(tile.linkTitle)}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:0.5rem;">`;
+            }
+            contentHtml = `
+                <div class="link-preview">
+                    ${previewImage}
+                    <div style="padding:0.5rem;">
+                        <div style="font-weight:bold;color:#ffecb3;">${escapeHtml(tile.linkTitle || tile.title)}</div>
+                        ${tile.linkDescription ? `<div style="font-size:0.8rem;color:#d4af6a;margin-top:0.2rem;">${escapeHtml(tile.linkDescription)}</div>` : ''}
+                        <a href="${tile.linkUrl}" target="_blank" rel="noopener noreferrer" 
+                           style="display:inline-block;margin-top:0.5rem;color:#d4af6a;text-decoration:underline;font-size:0.8rem;">
+                            🔗 Abrir link
+                        </a>
+                    </div>
+                </div>
+            `;
+        } else if (tile.files && tile.files.length > 0) {
+            let filesHtml = '<div style="margin-top:0.5rem;">';
+            tile.files.forEach(file => {
+                const icon = getFileIcon(file.type);
+                const fileId = file.fileId || file.url.split('id=')[1]?.split('&')[0];
+                if (file.type === 'image') {
+                    const imageUrl = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w800` : file.url;
+                    filesHtml += `<div style="margin:0.2rem 0;"><img src="${imageUrl}" alt="${escapeHtml(file.name)}" style="max-width:100%;border-radius:8px;max-height:200px;"></div>`;
+                } else if (file.type === 'audio') {
+                    const audioUrl = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : file.url;
+                    filesHtml += `<div style="margin:0.2rem 0;"><audio controls src="${audioUrl}" style="width:100%;"></audio></div>`;
+                } else if (file.type === 'video') {
+                    const videoUrl = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : file.url;
+                    filesHtml += `<div style="margin:0.2rem 0;"><video controls src="${videoUrl}" style="max-width:100%;border-radius:8px;"></video></div>`;
+                } else if (file.type === 'link') {
+                    filesHtml += `<div style="margin:0.2rem 0;"><a href="${file.url}" target="_blank" style="color:#d4af6a;text-decoration:underline;">🔗 ${escapeHtml(file.name)}</a></div>`;
+                } else if (file.type === 'pdf') {
+                    const pdfUrl = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : file.url;
+                    filesHtml += `<div style="margin:0.2rem 0;" class="pdf-preview" data-id="${tile.id}">`;
+                    filesHtml += `<span style="font-size:1.5rem;">📄</span>`;
+                    filesHtml += `<span style="font-size:0.8rem;margin-left:0.5rem;">${escapeHtml(file.name)}</span>`;
+                    filesHtml += `<span style="font-size:0.6rem;opacity:0.5;margin-left:0.5rem;">(clique para abrir)</span>`;
+                    filesHtml += `</div>`;
+                } else {
+                    filesHtml += `<div style="margin:0.2rem 0;display:flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.05);padding:0.3rem 0.6rem;border-radius:8px;">`;
+                    filesHtml += `<span style="font-size:1.2rem;">${icon}</span>`;
+                    filesHtml += `<span style="flex:1;font-size:0.8rem;">${escapeHtml(file.name)}</span>`;
+                    filesHtml += `<a href="${file.url}" target="_blank" style="color:#d4af6a;text-decoration:none;">📎</a>`;
+                    filesHtml += `<button class="btn-remove-file" data-tile="${tile.id}" data-file="${file.id}" style="background:transparent;border:none;color:#e74c3c;cursor:pointer;" title="Remover ficheiro">✕</button>`;
+                    filesHtml += `</div>`;
+                }
+            });
+            filesHtml += '</div>';
+            contentHtml = filesHtml;
+        } else {
+            contentHtml = escapeHtml(tile.content).replace(/\n/g, '<br>');
+            if (tile.content && tile.content.length > 200) {
+                contentHtml += `<button class="btn-expand-text" data-id="${tile.id}">📖 Expandir</button>`;
+            }
+        }
+
+        let msgsHtml = '';
+        if (tile.messages && tile.messages.length > 0) {
+            msgsHtml = `<div class="tile-messages"><div class="messages-title">💬 ${tile.messages.length} msg(s)</div>`;
+            tile.messages.forEach(msg => {
+                msgsHtml += `<div class="message-item"><span><strong>${escapeHtml(msg.userName || 'Anónimo')}:</strong> ${escapeHtml(msg.text)}</span><span class="message-time">${msg.timestamp}</span><button class="btn-delete-msg" data-tile="${tile.id}" data-msg="${msg.id}">✕</button></div>`;
+            });
+            msgsHtml += `</div>`;
+        }
+
+        div.innerHTML = `
+            <div class="tile-header">
+                <span class="tile-type">${tile.type}${tile.isOverlay ? ' · sobre' : ''}${tile.isCentral ? ' ⭐' : ''}</span>
+                <div class="tile-actions-top">
+                    <button class="btn-copy-overlay" data-id="${tile.id}" title="Copiar sobre">📋 Sob</button>
+                    <button class="btn-split" data-id="${tile.id}" title="Subdividir">✂️ Div</button>
+                    <button class="btn-duplicate" data-id="${tile.id}">🔄</button>
+                    <button class="btn-edit" data-id="${tile.id}">✏️</button>
+                    <button class="btn-toggle" data-id="${tile.id}">${tile.active !== false ? '🔆' : '🌙'}</button>
+                    <button class="btn-delete" data-id="${tile.id}">🗑️</button>
+                </div>
+            </div>
+            <div class="tile-title">${escapeHtml(tile.title)}</div>
+            <div class="tile-content">${contentHtml}</div>
+            ${msgsHtml}
+            <div class="tile-message-input">
+                <input type="text" class="msg-input" data-id="${tile.id}" placeholder="Comentário..." />
+                <button class="btn-send-msg" data-id="${tile.id}">Enviar</button>
+            </div>
+            <div class="tile-footer">
+                <div class="tile-tags">${tagsHtml}</div>
+                <div class="tile-actions-bottom">
+                    <button class="btn-upload" data-id="${tile.id}">📎 Upload</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    // Eventos
+    document.querySelectorAll('.tile').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (e.target.closest('button')) return;
+            const tileId = this.dataset.id;
+            const tile = tiles.find(t => t.id === tileId);
+            if (tile && tile.type === 'poemario') {
+                openPoemario();
+                return;
+            }
+            if (!canViewTile(tileId, getUserName())) {
+                showNotification('🔒 Não tens permissão para ver este tile.');
+                return;
+            }
+            setCurrentTile(tileId);
+        });
+    });
+
+    document.querySelectorAll('.btn-duplicate').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        duplicateTile(this.dataset.id);
+    }));
+    document.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openEditModal(this.dataset.id);
+    }));
+    document.querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        deleteTile(this.dataset.id);
+    }));
+    document.querySelectorAll('.btn-toggle').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleActive(this.dataset.id);
+    }));
+    document.querySelectorAll('.btn-upload').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const id = this.dataset.id;
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*,audio/*,video/*,application/pdf,.mp4,.webm,.ogg,.mov,.avi,.mkv,.mp3,.wav';
+        input.click();
+        input.onchange = async function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const fileType = getFileTypeFromMime(file.type);
+                const alias = getUserName();
+                await uploadToDrive(file, fileType, alias);
+            }
+            this.value = '';
+        };
+    }));
+    document.querySelectorAll('.btn-send-msg').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const id = this.dataset.id;
+        const inp = this.parentElement.querySelector('.msg-input');
+        if (inp && inp.value.trim()) {
+            addMessageToTile(id, inp.value.trim());
+            inp.value = '';
+        }
+    }));
+    document.querySelectorAll('.msg-input').forEach(inp => inp.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const id = this.dataset.id;
+            const btn = this.parentElement.querySelector('.btn-send-msg');
+            if (btn) btn.click();
+        }
+    }));
+    document.querySelectorAll('.btn-delete-msg').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (confirm('Remover mensagem?')) deleteMessageFromTile(this.dataset.tile, this.dataset.msg);
+    }));
+    document.querySelectorAll('.btn-expand-text').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            expandText(this.dataset.id);
+        });
+    });
+    document.querySelectorAll('.btn-remove-file').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const tileId = this.dataset.tile;
+        const fileId = this.dataset.file;
+        const tile = tiles.find(t => t.id === tileId);
+        if (tile && tile.files) {
+            tile.files = tile.files.filter(f => f.id !== fileId);
+            saveToLocalStorage();
+            renderMosaic();
+            showNotification('🗑️ Ficheiro removido.');
+        }
+    }));
+    document.querySelectorAll('.pdf-preview').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const tileId = this.dataset.id;
+            const tile = tiles.find(t => t.id === tileId);
+            if (tile && tile.files) {
+                const pdfFile = tile.files.find(f => f.type === 'pdf');
+                if (pdfFile) {
+                    const url = pdfFile.fileId ? `https://drive.google.com/uc?export=view&id=${pdfFile.fileId}` : pdfFile.url;
+                    window.open(url, '_blank');
+                    return;
+                }
+            }
+            if (tile && tile.fileUrl) {
+                window.open(tile.fileUrl, '_blank');
+            } else if (tile && tile.fileId) {
+                const url = `https://drive.google.com/uc?export=view&id=${tile.fileId}`;
+                window.open(url, '_blank');
+            } else {
+                showNotification('❌ PDF não encontrado.');
+            }
+        });
+    });
+
+    if (currentTileId) {
+        const tileEl = document.querySelector(`.tile[data-id="${currentTileId}"]`);
+        if (tileEl) tileEl.classList.add('current');
+        const tile = tiles.find(t => t.id === currentTileId);
+        if (tile) {
+            document.getElementById('wandererStatus').textContent = `📌 em "${tile.title}"`;
+        } else {
+            currentTileId = null;
+        }
+    }
+
+    const active = tiles.filter(t => t.active !== false).length;
+    document.getElementById('wandererStatus').textContent = document.getElementById('wandererStatus').textContent || `percorrendo ${active} blocos`;
+}
+
+// ============================================================
+//  MODAL EDIÇÃO
+// ============================================================
+function openEditModal(id) {
+    const tile = tiles.find(t => t.id === id);
+    if (!tile) return;
+    if (!canEditTile(id, getUserName())) {
+        showNotification('❌ Não tens permissão para editar esta tile.');
+        return;
+    }
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+        <div class="modal-card">
+            <h3>✏️ Editar azulejo</h3>
+            <input type="text" id="editTitle" value="${escapeHtml(tile.title)}" placeholder="Título">
+            <textarea id="editContent" rows="4" placeholder="Conteúdo">${escapeHtml(tile.content)}</textarea>
+            <select id="editType">
+                <option value="texto" ${tile.type==='texto'?'selected':''}>📄 Texto</option>
+                <option value="imagem" ${tile.type==='imagem'?'selected':''}>🖼️ Imagem</option>
+                <option value="audio" ${tile.type==='audio'?'selected':''}>🎵 Áudio</option>
+                <option value="video" ${tile.type==='video'?'selected':''}>🎬 Vídeo</option>
+                <option value="pdf" ${tile.type==='pdf'?'selected':''}>📄 PDF</option>
+                <option value="link" ${tile.type==='link'?'selected':''}>🔗 Link</option>
+            </select>
+            <div id="linkFields" style="${tile.type==='link' ? 'display:block;' : 'display:none;'}">
+                <input type="text" id="editLinkUrl" value="${escapeHtml(tile.linkUrl || '')}" placeholder="URL do link (ex: https://...)" style="width:100%;background:#1f1a14;border:1px solid #b88b4a;color:#f0ece3;padding:0.6rem;border-radius:10px;margin-bottom:0.8rem;">
+                <input type="text" id="editLinkTitle" value="${escapeHtml(tile.linkTitle || '')}" placeholder="Título do link (opcional)" style="width:100%;background:#1f1a14;border:1px solid #b88b4a;color:#f0ece3;padding:0.6rem;border-radius:10px;margin-bottom:0.8rem;">
+                <input type="text" id="editLinkDescription" value="${escapeHtml(tile.linkDescription || '')}" placeholder="Descrição do link (opcional)" style="width:100%;background:#1f1a14;border:1px solid #b88b4a;color:#f0ece3;padding:0.6rem;border-radius:10px;margin-bottom:0.8rem;">
+            </div>
+            <input type="text" id="editTags" value="${(tile.tags||[]).join(', ')}" placeholder="Tags (separadas por vírgula)">
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modalCancel">Cancelar</button>
+                <button class="btn-save" id="modalSave">Salvar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const typeSelect = modal.querySelector('#editType');
+    const linkFields = modal.querySelector('#linkFields');
+    typeSelect.addEventListener('change', function() {
+        linkFields.style.display = this.value === 'link' ? 'block' : 'none';
+    });
+
+    modal.querySelector('#modalCancel').addEventListener('click', () => modal.remove());
+
+    modal.querySelector('#modalSave').addEventListener('click', function() {
+        const nt = modal.querySelector('#editTitle').value;
+        const nc = modal.querySelector('#editContent').value;
+        const nt2 = modal.querySelector('#editType').value;
+        const ntags = modal.querySelector('#editTags').value.split(',').map(s => s.trim()).filter(Boolean);
+        const tile = tiles.find(t => t.id === id);
+        if (tile && nt2 === 'link') {
+            tile.linkUrl = modal.querySelector('#editLinkUrl').value;
+            tile.linkTitle = modal.querySelector('#editLinkTitle').value;
+            tile.linkDescription = modal.querySelector('#editLinkDescription').value;
+        }
+        editTile(id, nt, nc, nt2, ntags);
+        modal.remove();
+    });
+
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
+
+// ============================================================
+//  UTILITÁRIOS
+// ============================================================
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; });
+}
+
+// ============================================================
+//  NOVO MOSAICO COM BACKUP
+// ============================================================
+function newMosaic() {
+    if (!confirm('Criar novo mosaico vazio? O atual será guardado como backup.')) return;
+    if (tiles.length > 0) {
+        localStorage.setItem('enheduanna_mosaic_backup', JSON.stringify(tiles));
+        localStorage.setItem('enheduanna_agents_backup', JSON.stringify(agentImages));
+    }
+    tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
+    currentTileId = null;
+    saveToLocalStorage();
+    renderMosaic();
+    showNotification('🔄 Novo mosaico criado.');
+}
+
+function recoverMosaic() {
+    const backup = localStorage.getItem('enheduanna_mosaic_backup');
+    if (!backup) {
+        showNotification('❌ Nenhum mosaico anterior encontrado.');
+        return;
+    }
+    if (!confirm('Substituir o mosaico atual pelo anterior?')) return;
+    try {
+        const restored = JSON.parse(backup);
+        tiles = restored;
+        tiles.forEach(t => { if (!t.messages) t.messages = []; if (!t.files) t.files = []; });
+        const agentsBackup = localStorage.getItem('enheduanna_agents_backup');
+        if (agentsBackup) {
+            agentImages = JSON.parse(agentsBackup);
+            applyAgentImages();
+        }
+        saveToLocalStorage();
+        renderMosaic();
+        showNotification('✅ Mosaico anterior recuperado.');
+    } catch (e) {
+        showNotification('❌ Erro ao recuperar: ' + e.message);
+    }
+}
+
+function resetToInitial() {
+    if (!confirm('Restaurar original?')) return;
+    tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
+    currentTileId = null;
+    saveToLocalStorage();
+    renderMosaic();
+    showNotification('⟳ Mosaico restaurado.');
+}
+
+function toggleShowInactive() { showInactive = !showInactive; renderMosaic(); }
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+        document.execCommand('copy');
+        showNotification('✅ Copiado! Pode colar onde desejar.');
+    } catch(e) {
+        showNotification('❌ Não foi possível copiar. Selecione e copie manualmente.');
+    }
+    document.body.removeChild(ta);
+}
+
+// ============================================================
+//  AGENTES - IMAGENS
+// ============================================================
+function applyAgentImages() {
+    const map = {
+        enheduanna: { img: 'enheduannaImg', placeholder: 'enheduannaPlaceholder' },
+        wanderer: { img: 'wandererImg', placeholder: 'wandererPlaceholder' },
+        ogum: { img: 'ogumImg', placeholder: 'ogumPlaceholder' }
+    };
+    Object.keys(map).forEach(key => {
+        const img = document.getElementById(map[key].img);
+        const ph = document.getElementById(map[key].placeholder);
+        if (agentImages[key]) {
+            img.src = agentImages[key];
+            img.style.display = 'block';
+            ph.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+            ph.style.display = 'block';
+        }
+    });
+}
+
+function setupAgentUpload(agentKey) {
+    const btn = document.querySelector(`.btn-upload-agent[data-agent="${agentKey}"]`);
+    if (!btn) return;
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        fileInput.click();
+    });
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            agentImages[agentKey] = ev.target.result;
+            applyAgentImages();
+            saveToLocalStorage();
+        };
+        reader.readAsDataURL(file);
+        fileInput.value = '';
+    });
+}
+
+// ============================================================
+//  EXPORTAR E IMPORTAR JSON
+// ============================================================
+async function exportEstado() {
+    if (tiles.length === 0) {
+        showNotification('❌ O mosaico está vazio.');
+        return;
+    }
+    const data = { tiles, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    await uploadToDrive(blob, 'version', getUserName());
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `enheduanna_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importEstado(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.tiles && Array.isArray(data.tiles)) {
+                tiles = data.tiles;
+                tiles.forEach(t => { if (!t.messages) t.messages = []; if (!t.files) t.files = []; });
+                saveToLocalStorage();
+                renderMosaic();
+                showNotification('✅ Estado importado com sucesso! ' + tiles.length + ' blocos.');
+            } else {
+                showNotification('❌ Ficheiro inválido: falta a propriedade "tiles".');
+            }
+        } catch(err) {
+            showNotification('❌ Erro ao ler o ficheiro: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// ============================================================
+//  VERSÕES
+// ============================================================
+async function saveVersionToDrive(description) {
+    if (tiles.length === 0) {
+        showNotification('❌ O mosaico está vazio.');
+        return;
+    }
+    const versionName = `versao_${new Date().toISOString().replace(/[:.]/g, '-')}`;
+    const versionData = {
+        id: versionName,
+        timestamp: new Date().toISOString(),
+        description: description || 'Sem descrição',
+        tiles: tiles,
+        userName: getUserName()
+    };
+    try {
+        const payload = new URLSearchParams();
+        payload.append('filename', versionName + '.json');
+        payload.append('filetype', 'application/json');
+        payload.append('filedata', btoa(unescape(encodeURIComponent(JSON.stringify(versionData)))));
+        payload.append('folder', 'mosaico/filhos/versoes/active');
+        const response = await fetch(UPLOAD_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: payload.toString()
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const result = await response.json();
+        if (result.success) {
+            showNotification(`✅ Versão "${versionName}" guardada com sucesso!`);
+            logAction('save_version', null, { versionName: versionName });
+        } else {
+            throw new Error(result.error || 'Erro ao guardar versão.');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao guardar versão:', error);
+        showNotification(`❌ Erro ao guardar versão: ${error.message}`);
+    }
+}
+
+async function listVersions() {
+    showNotification('📋 Funcionalidade de listagem de versões em desenvolvimento.\nPor agora, use o Google Drive para ver os ficheiros JSON guardados.');
+}
+
+// ============================================================
+//  INICIALIZAÇÃO
+// ============================================================
+function init() {
+    // Mostrar dropdown de utilizadores primeiro
+    showUserDropdown();
+    
+    // Carregar mosaico
+    loadMosaic();
+    renderMosaic();
+    setupAgentUpload('enheduanna');
+    setupAgentUpload('wanderer');
+    setupAgentUpload('ogum');
+
+    document.getElementById('btnAddTile').addEventListener('click', () => addTile());
+    document.getElementById('btnReset').addEventListener('click', resetToInitial);
+    document.getElementById('btnNewMosaic').addEventListener('click', newMosaic);
+    document.getElementById('btnRecover').addEventListener('click', recoverMosaic);
+    document.getElementById('btnToggleInactive').addEventListener('click', toggleShowInactive);
+    document.getElementById('btnExport').addEventListener('click', exportEstado);
+    document.getElementById('btnImport').addEventListener('click', function() {
+        document.getElementById('fileInputImport').click();
+    });
+    document.getElementById('fileInputImport').addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            importEstado(this.files[0]);
+        }
+        this.value = '';
+    });
+    document.getElementById('btnSaveVersion').addEventListener('click', function() {
+        const desc = prompt('Descrição da versão (opcional):');
+        saveVersionToDrive(desc || 'Sem descrição');
+    });
+    document.getElementById('btnListVersions').addEventListener('click', listVersions);
+    document.getElementById('btnShare').addEventListener('click', function() {
+        const data = { tiles, exportedAt: new Date().toISOString() };
+        const jsonStr = JSON.stringify(data);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(jsonStr).then(() => {
+                showNotification('✅ Estado copiado! Pode colar onde desejar.');
+            }).catch(() => {
+                fallbackCopy(jsonStr);
+            });
+        } else {
+            fallbackCopy(jsonStr);
+        }
+    });
+    document.getElementById('btnMerge').addEventListener('click', function() {
+        const selected = prompt('IDs dos tiles para fundir (separados por vírgula):');
+        if (selected) {
+            const ids = selected.split(',').map(id => id.trim());
+            mergeTiles(ids);
+        }
+    });
+    document.getElementById('btnActivateTile').addEventListener('click', function() {
+        const tileId = prompt('ID da tile a ativar:');
+        if (tileId) {
+            activateTile(tileId.trim());
+        }
+    });
+
+    document.querySelectorAll('.mode-btn').forEach(b => {
+        b.addEventListener('click', function() {
+            document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // ============================================================
+    //  ENHEDUANNA
+    // ============================================================
+    document.getElementById('enheduannaAvatar').addEventListener('click', function() {
+        if (isGuest()) {
+            showNotification('👤 Por favor, escolhe um nome para interagir com a Enheduanna.');
+            return;
+        }
+        const currentTile = getCurrentTile();
+        if (!currentTile) {
+            const resposta = prompt(
+                '📜 Enheduanna: "Onde vamos, andarilha?"\n\n' +
+                'Escolhe uma opção:\n' +
+                '1. "Mostra-me o mosaico."\n' +
+                '2. "Ajuda-me a começar."\n' +
+                '3. "Anda comigo."\n' +
+                '4. "Fala-me do poema."'
+            );
+            if (resposta) {
+                const lower = resposta.toLowerCase();
+                let msg = '';
+                if (lower.includes('1') || lower.includes('mosaico')) {
+                    msg = '📜 Enheduanna: "O mosaico espera por ti. Escolhe uma peça e começa a dançar."';
+                } else if (lower.includes('2') || lower.includes('ajuda') || lower.includes('começar')) {
+                    msg = '📜 Enheduanna: "Toca numa peça do mosaico para a abrires. Cada peça guarda uma palavra, uma imagem, um som. Quando te sentires pronta, chama-me."';
+                } else if (lower.includes('3') || lower.includes('anda') || lower.includes('caminhar')) {
+                    msg = '📜 Enheduanna: "Sigo-te. Cada passo teu é um verso. Cada escolha, uma estrofe."';
+                } else if (lower.includes('4') || lower.includes('poema') || lower.includes('fala')) {
+                    msg = '📜 Enheduanna: "Entre nós e as palavras há metal fundente... Escolhe uma peça e ouve o poema."';
+                } else {
+                    msg = `📜 Enheduanna: "${resposta}... Interessante. Talvez encontres o que procuras numa das peças do mosaico."`;
+                }
+                showNotification(msg);
+                document.getElementById('suggestionText').textContent = `💡 ${msg}`;
+                document.getElementById('enheduannaStatus').textContent = 'a tecer no vazio...';
+            }
+            return;
+        }
+        const sug = generateSuggestions(currentTile);
+        document.getElementById('suggestionText').textContent = `💡 ${sug}`;
+        document.getElementById('enheduannaStatus').textContent = `a tecer sobre "${currentTile.title}"`;
+        addMessageToTile(currentTile.id, `📜 Enheduanna: ${sug}`);
+        renderMosaic();
+    });
+
+    // ============================================================
+    //  WANDERER
+    // ============================================================
+    document.getElementById('wandererAvatar').addEventListener('click', function() {
+        if (isGuest()) {
+            showNotification('👤 Por favor, escolhe um nome para interagir com o Wanderer.');
+            return;
+        }
+        const currentTile = getCurrentTile();
+        if (!currentTile) {
+            const resposta = prompt(
+                '🚶 Wanderer: "Por onde queres caminhar?"\n\n' +
+                'Escolhe:\n' +
+                '1. "Leva-me ao centro."\n' +
+                '2. "Mostra-me os caminhos que já percorri."\n' +
+                '3. "Quero uma nova descoberta."'
+            );
+            if (resposta) {
+                const lower = resposta.toLowerCase();
+                let msg = '';
+                if (lower.includes('1') || lower.includes('centro')) {
+                    const center = tiles.find(t => t.isCentral);
+                    if (center) {
+                        setCurrentTile(center.id);
+                        msg = '🚶 Wanderer: "Chegaste ao centro. Aqui está o coração do mosaico."';
+                    } else {
+                        msg = '🚶 Wanderer: "Não encontrei o centro. Talvez precises de criar uma peça central."';
+                    }
+                } else if (lower.includes('2') || lower.includes('caminhos') || lower.includes('percorri')) {
+                    const logs = wandererLogs || [];
+                    if (logs.length === 0) {
+                        msg = '🚶 Wanderer: "Ainda não percorreste nenhum caminho. Começa por escolher uma peça."';
+                    } else {
+                        const last = logs[logs.length - 1];
+                        msg = `🚶 Wanderer: "Já percorreste ${logs.length} peças. A última foi "${last.tileTitle || 'desconhecida'}".`;
+                    }
+                } else if (lower.includes('3') || lower.includes('nova') || lower.includes('descobrir')) {
+                    const randomTile = tiles.filter(t => t.active !== false && !t.isCentral);
+                    if (randomTile.length > 0) {
+                        const chosen = randomTile[Math.floor(Math.random() * randomTile.length)];
+                        setCurrentTile(chosen.id);
+                        msg = `🚶 Wanderer: "Descobriste "${chosen.title}". O que te sugere?"`;
+                    } else {
+                        msg = '🚶 Wanderer: "Não há novas peças para descobrir. Cria uma nova tile."';
+                    }
+                } else {
+                    msg = `🚶 Wanderer: "${resposta}... Caminha comigo e veremos o que encontramos."`;
+                }
+                showNotification(msg);
+                document.getElementById('wandererStatus').textContent = msg.substring(0, 50) + '...';
+            }
+            return;
+        }
+        highlightTile(currentTile.id);
+        document.getElementById('wandererStatus').textContent = `percorrendo: "${currentTile.title}"`;
+        addMessageToTile(currentTile.id, '🚶 Wanderer passou por aqui.');
+        renderMosaic();
+    });
+
+    // ============================================================
+    //  OGUM
+    // ============================================================
+    document.getElementById('ogumAvatar').addEventListener('click', function() {
+        if (isGuest()) {
+            showNotification('👤 Por favor, escolhe um nome para interagir com o Ogum.');
+            return;
+        }
+        const currentTile = getCurrentTile();
+        if (!currentTile) {
+            const resposta = prompt(
+                '⚔️ Ogum: "O que queres inventar?"\n\n' +
+                'Escolhe:\n' +
+                '1. "Quero criar uma nova tile."\n' +
+                '2. "Quero uma ferramenta para explorar."\n' +
+                '3. "Ajuda-me a encontrar inspiração."'
+            );
+            if (resposta) {
+                const lower = resposta.toLowerCase();
+                let msg = '';
+                if (lower.includes('1') || lower.includes('criar') || lower.includes('nova')) {
+                    addTile();
+                    msg = '⚔️ Ogum: "Uma nova tile está a nascer. Dá-lhe um nome e um conteúdo."';
+                } else if (lower.includes('2') || lower.includes('ferramenta') || lower.includes('explorar')) {
+                    msg = '⚔️ Ogum: "As ferramentas estão à tua disposição: Twine, Poemário, DALL-E, Udio. O que desejas usar?"';
+                } else if (lower.includes('3') || lower.includes('inspiração') || lower.includes('ajuda')) {
+                    const randomTile = tiles.filter(t => t.active !== false);
+                    if (randomTile.length > 0) {
+                        const chosen = randomTile[Math.floor(Math.random() * randomTile.length)];
+                        setCurrentTile(chosen.id);
+                        msg = `⚔️ Ogum: "Inspira-te em "${chosen.title}". O que vês nele?"`;
+                    } else {
+                        msg = '⚔️ Ogum: "Começa por criar uma tile. A inspiração virá."';
+                    }
+                } else {
+                    msg = `⚔️ Ogum: "${resposta}... Interessante. Vamos ver o que podemos construir."`;
+                }
+                showNotification(msg);
+                document.getElementById('ogumStatus').textContent = msg.substring(0, 40) + '...';
+            }
+            return;
+        }
+        const result = prompt(`⚔️ Ogum (Inventor)
+
+Ferramentas sugeridas para "${currentTile.title}":
+• 🎮 Twine (narrativa interativa)
+• 📝 Poemário (poesia combinatória)
+• 🖼️ Gerar imagem (DALL-E)
+• 🎵 Gerar música (Udio)
+
+O que desejas fazer?`);
+        if (result && result.trim()) {
+            addMessageToTile(currentTile.id, `⚔️ Ogum: ${result.trim()}`);
+            renderMosaic();
+            document.getElementById('ogumStatus').textContent = `última: ${result.trim().substring(0,30)}...`;
+        } else {
+            document.getElementById('ogumStatus').textContent = 'à espera de comando...';
+        }
+    });
+
+    // ============================================================
+    //  SUGESTÕES ALTERNADAS
+    // ============================================================
+    const sugestoes = [
+        '💡 "Ligue \'Metal fundente\' com algum texto seu?"',
+        '💡 "Que tal gerar uma imagem para \'Palavras diamantes\'?"',
+        '💡 "Este bloco sobre exílio conecta-se a Berlim 1989"',
+        '💡 "Pode criar um mini-resumo para partilhar com o Professor"',
+        '💡 "Ligue \'seu novo pedaço\' e chame o Wanderer ele te mostra a deriva"',
+    ];
+    let si = 0;
+    setInterval(() => {
+        const el = document.getElementById('suggestionText');
+        if (el) {
+            si = (si + 1) % sugestoes.length;
+            if (!document.getElementById('enheduannaStatus').textContent.includes('a tecer')) {
+                el.textContent = sugestoes[si];
+            }
+        }
+    }, 7000);
+
+    const userName = getUserName();
+    const userDisplay = document.createElement('div');
+    userDisplay.style.cssText = 'font-size:0.7rem;color:#d4af6a;margin-left:1rem;opacity:0.7;';
+    userDisplay.textContent = `👤 ${userName}`;
+    const headerLeft = document.querySelector('.header-left');
+    if (headerLeft) headerLeft.appendChild(userDisplay);
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
