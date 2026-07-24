@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enheduanna · nanna_0-3 · Mosaico Intertextual</title>
+    <title>Enheduanna · sec.XXI · Mosaico Intertextual</title>
     <style>
-        /* ============================================================
-           ESTILOS (mantidos da versão anterior)
-           ============================================================ */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
@@ -155,7 +152,7 @@
 
         .mosaic-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.2rem;
             margin-bottom: 2rem;
         }
@@ -173,13 +170,6 @@
         }
         .tile:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
         .tile.inactive { opacity: 0.4; filter: grayscale(0.6); border-left-color: #555; }
-        .tile.central {
-            grid-column: 2 / 3;
-            grid-row: 1 / 2;
-            border-left-color: #ffecb3;
-            border: 2px solid #ffecb3;
-            box-shadow: 0 0 30px rgba(212,175,106,0.4);
-        }
         .tile.tipo-texto { border-left-color: #4a8fc1; }
         .tile.tipo-imagem { border-left-color: #4caf50; }
         .tile.tipo-audio { border-left-color: #ff9800; }
@@ -361,7 +351,7 @@
     <div class="header">
         <div class="header-left">
             <h1>✨ ENHEDUANNA</h1>
-            <span class="sub">nanna_0-3 · mosaico intertextual</span>
+            <span class="sub">sec.XXI · mosaico intertextual</span>
             <span class="save-indicator" id="saveIndicator">✅ Guardado</span>
         </div>
         <div class="header-actions">
@@ -430,22 +420,14 @@
         <button id="btnSaveVersion" class="btn-primary">💾 Guardar versão</button>
         <button id="btnListVersions" class="btn-secondary">📋 Versões</button>
         <button id="btnShare" class="btn-primary">📨 Partilhar</button>
-        <button id="btnMerge" class="btn-primary">🔗 Fundir tiles</button>
-        <button id="btnActivateTile" class="btn-secondary">✨ Ativar tile</button>
     </div>
 
-    <footer>Enheduanna · nanna_0-3 · 2025 · Clique nos agentes para ativar funções</footer>
+    <footer>Enheduanna · sec.XXI · 2025 · Clique nos agentes para ativar funções</footer>
 </div>
 
 <script>
 // ============================================================
-//  VERSÃO: nanna_0-3
-//  URL do Google Apps Script (atualizar após deploy)
-// ============================================================
-const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbx6O1sbs5QbaoUjmFkxU83I_ZColYPcKTvTtEHGvf2zcXFoFMDscjJ9DELBqqGpzoAW/exec';
-
-// ============================================================
-//  MATRIZ INICIAL (6 tiles + links, apenas t0 ativa)
+//  MATRIZ INICIAL (6 tiles + Poemário + links)
 // ============================================================
 const INITIAL_TILES = [
     {
@@ -453,17 +435,10 @@ const INITIAL_TILES = [
         title: '✨ You are Welcome to Elsinore',
         content: 'Clique para abrir o Poemário Enheduanna',
         type: 'poemario',
-        tags: ['portal', 'enheduanna', 'Cesariny'],
+        tags: ['portal', 'enheduanna', 'elsinore'],
         isCentral: true,
-        active: true,
-        createdBy: 'Enheduanna',
-        createdAt: new Date().toISOString(),
-        origin: { type: 'mixed', createdBy: 'Enheduanna' },
-        permissions: { canView: { type: 'public' }, canEdit: ['Enheduanna'], canDelete: ['Enheduanna'] },
         files: [],
-        messages: [],
-        history: [],
-        contributors: ['Enheduanna']
+        messages: []
     },
     {
         id: 't1',
@@ -471,15 +446,8 @@ const INITIAL_TILES = [
         content: `Entre nós e as palavras há metal fundente\nentre nós e as palavras há hélices que andam\ne podem dar-nos morte     violar-nos     tirar\ndo mais fundo de nós o mais útil segredo\nentre nós e as palavras há perfis ardentes\nespaços cheios de gente de costas\naltas flores venenosas     portas por abrir\ne escadas e ponteiros e crianças sentadas\nà espera do seu tempo e do seu precipício`,
         type: 'texto',
         tags: ['Cesariny', 'metal', 'hélices'],
-        active: false,
-        createdBy: 'Enheduanna',
-        createdAt: new Date().toISOString(),
-        origin: { type: 'literatura', author: 'Cesariny' },
-        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
         files: [],
-        messages: [],
-        history: [],
-        contributors: ['Enheduanna']
+        messages: []
     },
     {
         id: 't2',
@@ -487,15 +455,8 @@ const INITIAL_TILES = [
         content: `Ao longo da muralha que habitamos\nhá palavras de vida     há palavras de morte\nhá palavras imensas, que esperam por nós\ne outras, frágeis, que deixaram de esperar\nhá palavras acesas como barcos\ne há palavras homens, palavras que guardam\no seu segredo e a sua posição`,
         type: 'texto',
         tags: ['Cesariny', 'muralha', 'vida', 'morte'],
-        active: false,
-        createdBy: 'Enheduanna',
-        createdAt: new Date().toISOString(),
-        origin: { type: 'literatura', author: 'Cesariny' },
-        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
         files: [],
-        messages: [],
-        history: [],
-        contributors: ['Enheduanna']
+        messages: []
     },
     {
         id: 't3',
@@ -503,15 +464,8 @@ const INITIAL_TILES = [
         content: `Entre nós e as palavras, surdamente,\nas mãos e as paredes de Elsinore`,
         type: 'texto',
         tags: ['Cesariny', 'Elsinore', 'mãos'],
-        active: false,
-        createdBy: 'Enheduanna',
-        createdAt: new Date().toISOString(),
-        origin: { type: 'literatura', author: 'Cesariny' },
-        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
         files: [],
-        messages: [],
-        history: [],
-        contributors: ['Enheduanna']
+        messages: []
     },
     {
         id: 't4',
@@ -519,15 +473,8 @@ const INITIAL_TILES = [
         content: `E há palavras nocturnas palavras gemidos\npalavras que nos sobem ilegíveis à boca\npalavras diamantes palavras nunca escritas\npalavras impossíveis de escrever\npor não termos connosco cordas de violinos\nnem todo o sangue do mundo nem todo o amplexo do ar\ne os braços dos amantes escrevem muito alto\nmuito além do azul onde oxidados morrem\npalavras maternais só sombra só soluço\nsó espasmos só amor só solidão desfeita`,
         type: 'texto',
         tags: ['Cesariny', 'diamantes', 'nocturnas'],
-        active: false,
-        createdBy: 'Enheduanna',
-        createdAt: new Date().toISOString(),
-        origin: { type: 'literatura', author: 'Cesariny' },
-        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
         files: [],
-        messages: [],
-        history: [],
-        contributors: ['Enheduanna']
+        messages: []
     },
     {
         id: 't5',
@@ -535,15 +482,34 @@ const INITIAL_TILES = [
         content: `Entre nós e as palavras, os emparedados\ne entre nós e as palavras, o nosso dever falar`,
         type: 'texto',
         tags: ['Cesariny', 'dever', 'falar'],
-        active: false,
-        createdBy: 'Enheduanna',
-        createdAt: new Date().toISOString(),
-        origin: { type: 'literatura', author: 'Cesariny' },
-        permissions: { canView: { type: 'public' }, canEdit: [], canDelete: ['Enheduanna'] },
         files: [],
-        messages: [],
-        history: [],
-        contributors: ['Enheduanna']
+        messages: []
+    },
+    {
+        id: 'link_twine_exercicio',
+        title: '🎮 Twine - Narrativa Interativa',
+        content: 'Exercício de narrativa interativa criado no Twine.',
+        type: 'link',
+        tags: ['twine', 'exercicio', 'oed'],
+        linkUrl: 'https://twinery.org/',
+        linkTitle: 'Abrir Twine',
+        linkDescription: 'Narrativa interativa sobre o poema "Metal fundente" do Cesariny.',
+        files: [],
+        permissions: { canEdit: false, canComment: true, canAddFiles: false, canInvite: false },
+        messages: []
+    },
+    {
+        id: 'link_poemario_exercicio',
+        title: '📝 Poemário - Poesia Combinatória',
+        content: 'Exercício de poesia combinatória criado no Poemário.',
+        type: 'link',
+        tags: ['poemario', 'exercicio', 'oed'],
+        linkUrl: 'https://twinery.org/',
+        linkTitle: 'Abrir Poemário',
+        linkDescription: 'Poesia combinatória a partir do poema "You are Welcome to Elsinore".',
+        files: [],
+        permissions: { canEdit: false, canComment: true, canAddFiles: false, canInvite: false },
+        messages: []
     }
 ];
 
@@ -553,9 +519,13 @@ const INITIAL_TILES = [
 let tiles = [];
 let showInactive = true;
 let agentImages = { enheduanna: '', wanderer: '', ogum: '' };
-let currentTileId = null;
+let currentTileId = null;  // MARCADOR DO TILE ATUAL
 let wandererLogs = [];
-let currentUserName = null;
+
+// ============================================================
+//  CONFIGURAÇÃO DO UPLOAD
+// ============================================================
+const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
 
 // ============================================================
 //  UTILIZADOR
@@ -570,81 +540,16 @@ function getUserId() {
 }
 
 function getUserName() {
-    if (currentUserName) return currentUserName;
     let userName = localStorage.getItem('enheduanna_user_name');
     if (!userName) {
-        return 'Guest';
+        userName = prompt('👤 Como queres ser chamado? (nome para registo)') || 'Anónimo';
+        localStorage.setItem('enheduanna_user_name', userName);
     }
     return userName;
 }
 
-function setUserName(name) {
-    currentUserName = name;
-    localStorage.setItem('enheduanna_user_name', name);
-}
-
-function isGuest() {
-    return getUserName() === 'Guest' || !getUserName();
-}
-
 function ensureUserIdentity() {
-    if (isGuest()) {
-        showNotification('👤 Por favor, escolhe um nome para interagir.');
-        showUserDropdown();
-        return false;
-    }
-    return true;
-}
-
-// ============================================================
-//  DROPDOWN DE UTILIZADORES
-// ============================================================
-function showUserDropdown() {
-    const modal = document.createElement('div');
-    modal.className = 'modal-bg';
-    modal.innerHTML = `
-        <div class="modal-card" style="max-width:350px; text-align:center;">
-            <h3>👤 Quem és?</h3>
-            <p style="color:#e0d6c5; margin-bottom:1rem;">Escolhe o teu nome para começar.</p>
-            <div style="display:flex; flex-direction:column; gap:0.5rem;">
-                <button class="btn-user" data-name="Enheduanna" style="padding:0.8rem; background:#b88b4a; border:none; border-radius:12px; color:#1a1612; font-weight:600; cursor:pointer;">📜 Enheduanna</button>
-                <button class="btn-user" data-name="Gisela" style="padding:0.8rem; background:#b88b4a; border:none; border-radius:12px; color:#1a1612; font-weight:600; cursor:pointer;">✨ Gisela</button>
-                <button id="btnCustomUser" style="padding:0.8rem; background:transparent; border:1px solid #b88b4a; border-radius:12px; color:#f0ece3; cursor:pointer; font-size:0.9rem;">
-                </button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    modal.querySelectorAll('.btn-user').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const name = this.dataset.name;
-            setUserName(name);
-            modal.remove();
-            showNotification(`👤 Bem-vindo(a), ${name}!`);
-            updateUserDisplay();
-            renderMosaic();
-        });
-    });
-
-    modal.querySelector('#btnCustomUser').addEventListener('click', function() {
-        const customName = prompt('👤 Como queres ser chamado?');
-        if (customName && customName.trim()) {
-            setUserName(customName.trim());
-            modal.remove();
-            showNotification(`👤 Bem-vindo(a), ${customName.trim()}!`);
-            updateUserDisplay();
-            renderMosaic();
-        }
-    });
-}
-
-function updateUserDisplay() {
-    const name = getUserName();
-    const displayEl = document.getElementById('userDisplay');
-    if (displayEl) {
-        displayEl.textContent = `👤 ${name}`;
-    }
+    return getUserName();
 }
 
 // ============================================================
@@ -700,16 +605,35 @@ function loadMosaic() {
 }
 
 // ============================================================
-//  TILE ATUAL
+//  TILE ATUAL (currentTile)
 // ============================================================
 function setCurrentTile(tileId) {
     const tile = tiles.find(t => t.id === tileId);
     if (!tile) return;
+    
     currentTileId = tileId;
+    
+    // Regista no Wanderer
+    const userName = getUserName();
+    if (userName && userName !== 'Anónimo') {
+        wandererLogs.push({
+            action: 'view',
+            tileId: tileId,
+            tileTitle: tile.title,
+            userName: userName,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('enheduanna_wanderer', JSON.stringify(wandererLogs));
+    }
+    
+    // Destaca na interface
     document.querySelectorAll('.tile').forEach(el => el.classList.remove('current'));
     const tileEl = document.querySelector(`.tile[data-id="${tileId}"]`);
     if (tileEl) tileEl.classList.add('current');
+    
+    // Atualiza status do Wanderer
     document.getElementById('wandererStatus').textContent = `📌 em "${tile.title}"`;
+    
     saveToLocalStorage();
 }
 
@@ -728,10 +652,12 @@ function hasCurrentTile() {
 function showNotification(message, duration = 5000) {
     const existing = document.querySelector('.notification');
     if (existing) existing.remove();
+    
     const notif = document.createElement('div');
     notif.className = 'notification';
     notif.textContent = message;
     document.body.appendChild(notif);
+    
     setTimeout(() => {
         notif.style.opacity = '0';
         notif.style.transition = 'opacity 0.5s';
@@ -740,92 +666,104 @@ function showNotification(message, duration = 5000) {
 }
 
 // ============================================================
-//  LOGS E DOCUMENTAÇÃO
+//  UPLOAD PARA GOOGLE DRIVE (com proxy CORS)
 // ============================================================
-function logAction(action, tileId, details) {
-    const userName = getUserName();
-    const logEntry = {
-        action: action,
-        user: userName,
-        userId: getUserId(),
-        tileId: tileId || null,
-        details: details || {},
-        timestamp: new Date().toISOString()
-    };
-    const history = JSON.parse(localStorage.getItem('enheduanna_action_history') || '[]');
-    history.push(logEntry);
-    localStorage.setItem('enheduanna_action_history', JSON.stringify(history));
-    if (tileId) {
-        const tile = tiles.find(t => t.id === tileId);
-        if (tile) {
-            if (!tile.history) tile.history = [];
-            tile.history.push(logEntry);
-            saveToLocalStorage();
+async function uploadToDrive(file, tileId) {
+    try {
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyP7jI27ecuqzSrdlxS1wr8I2qeE3LbY99awPUcxJ3ii6pajVOR-EOHlZFh4Z58irtZ/exec';
+        const url = proxyUrl + scriptUrl;
+
+        console.log('📤 URL do upload (com proxy):', url);
+        console.log('📄 Ficheiro:', file.name, file.size, file.type);
+
+        const reader = new FileReader();
+        const base64 = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+
+        // Determina a pasta com base no tipo
+        let folder = 'assets/other';
+        if (file.type.startsWith('image/')) folder = 'assets/images';
+        else if (file.type.startsWith('audio/')) folder = 'assets/audio';
+        else if (file.type.startsWith('video/')) folder = 'assets/video';
+        else if (file.type === 'application/pdf') folder = 'assets/pdf';
+        else if (file.type.includes('epub')) folder = 'assets/epub';
+
+        const payload = {
+            filename: file.name,
+            filetype: file.type,
+            filesize: file.size,
+            filedata: base64,
+            folder: folder
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
         }
+
+        const result = await response.json();
+        console.log('📦 Resposta do servidor:', result);
+
+        if (!result.success) {
+            throw new Error(result.error || 'Erro no servidor.');
+        }
+
+        if (!result.fileUrl) {
+            throw new Error('Resposta do servidor não contém fileUrl.');
+        }
+
+        const tile = tiles.find(t => t.id === tileId);
+        if (!tile) {
+            throw new Error('Tile não encontrada.');
+        }
+
+        // Adiciona o ficheiro ao array files[]
+        if (!tile.files) tile.files = [];
+        const fileEntry = {
+            id: generateId(),
+            url: result.fileUrl,
+            fileId: result.fileId,
+            type: getFileTypeFromMime(result.fileType || file.type),
+            mimeType: result.fileType || file.type,
+            name: result.fileName || file.name,
+            size: result.fileSize || file.size,
+            folder: result.folder || folder,
+            uploadedBy: getUserName(),
+            uploadedAt: new Date().toISOString()
+        };
+        tile.files.push(fileEntry);
+
+        // Se for o primeiro ficheiro, define o tipo da tile
+        if (tile.files.length === 1) {
+            const fileType = fileEntry.type;
+            if (fileType === 'image') tile.type = 'imagem';
+            else if (fileType === 'audio') tile.type = 'audio';
+            else if (fileType === 'video') tile.type = 'video';
+            else if (fileType === 'pdf') tile.type = 'pdf';
+            else if (fileType === 'epub') tile.type = 'epub';
+        }
+
+        saveToLocalStorage();
+        renderMosaic();
+        showNotification(`✅ Ficheiro "${file.name}" guardado na Drive!`);
+        return result;
+
+    } catch (error) {
+        console.error('❌ Erro no upload:', error);
+        showNotification(`❌ Erro ao enviar ficheiro: ${error.message}`);
+        return null;
     }
-    return logEntry;
 }
 
-// ============================================================
-//  PERMISSÕES
-// ============================================================
-function canViewTile(tileId, userName) {
-    const tile = tiles.find(t => t.id === tileId);
-    if (!tile) return false;
-    if (!tile.permissions) return true;
-    const perms = tile.permissions.canView;
-    if (!perms) return true;
-    if (perms.type === 'public') return true;
-    if (perms.type === 'private') return tile.createdBy === userName;
-    if (perms.type === 'restricted') {
-        if (perms.users && perms.users.includes(userName)) return true;
-        return false;
-    }
-    return true;
-}
-
-function canEditTile(tileId, userName) {
-    if (isGuest()) return false;
-    const tile = tiles.find(t => t.id === tileId);
-    if (!tile) return false;
-    if (tile.createdBy === userName) return true;
-    if (tile.permissions?.canEdit?.includes(userName)) return true;
-    return false;
-}
-
-function canDeleteTile(tileId, userName) {
-    const tile = tiles.find(t => t.id === tileId);
-    if (!tile) return false;
-    if (tile.permissions?.canDelete?.includes(userName)) return true;
-    return false;
-}
-
-// ============================================================
-//  ATIVAR TILE (apenas Enheduanna)
-// ============================================================
-function activateTile(tileId) {
-    const tile = tiles.find(t => t.id === tileId);
-    if (!tile) return;
-    const userName = getUserName();
-    if (userName !== 'Enheduanna') {
-        showNotification('❌ Apenas a Enheduanna pode ativar tiles.');
-        return;
-    }
-    if (tile.active === true) {
-        showNotification(`ℹ️ A tile "${tile.title}" já está ativa.`);
-        return;
-    }
-    tile.active = true;
-    tile.history.push({ action: 'activate', by: userName, timestamp: new Date().toISOString() });
-    saveToLocalStorage();
-    renderMosaic();
-    logAction('activate_tile', tileId, { by: userName });
-    showNotification(`✅ Tile "${tile.title}" ativada.`);
-}
-
-// ============================================================
-//  UPLOAD PARA GOOGLE DRIVE (com proxy CORS e getFileTypeFromMime)
-// ============================================================
 function getFileTypeFromMime(mimeType) {
     if (mimeType.startsWith('image/')) return 'image';
     if (mimeType.startsWith('audio/')) return 'audio';
@@ -835,31 +773,151 @@ function getFileTypeFromMime(mimeType) {
     return 'other';
 }
 
-async function uploadToDrive(base64Data, fileName, fileMimeType, type, alias) {
-    
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6O1sbs5QbaoUjmFkxU83I_ZColYPcKTvTtEHGvf2zcXFoFMDscjJ9DELBqqGpzoAW/exec';
-    
-     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        
-        reader.onload = async function(evt) {
-            const base64Data = evt.target.result; // data:image/png;base64,iVBOR...
-            const fileName = customFileName || fileOrBlob.name || `enheduanna_${Date.now()}`;
-            const mimeType = fileOrBlob.type || 'application/octet-stream';
-            
-            try {
-                const result = await uploadParaEnheduannaDrive(base64Data, fileName, mimeType, type, alias);
-                resolve(result);
-            } catch (err) {
-                reject(err);
+function getFileIcon(type) {
+    const icons = {
+        'image': '🖼️',
+        'audio': '🎵',
+        'video': '🎬',
+        'pdf': '📄',
+        'epub': '📖',
+        'link': '🔗',
+        'other': '📎'
+    };
+    return icons[type] || '📎';
+}
+
+// ============================================================
+//  EXPORTAR E IMPORTAR JSON
+// ============================================================
+function exportEstado() {
+    if (tiles.length === 0) {
+        showNotification('❌ O mosaico está vazio.');
+        return;
+    }
+    const data = { tiles, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `enheduanna_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importEstado(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.tiles && Array.isArray(data.tiles)) {
+                tiles = data.tiles;
+                tiles.forEach(t => { if (!t.messages) t.messages = []; if (!t.files) t.files = []; });
+                saveToLocalStorage();
+                renderMosaic();
+                showNotification('✅ Estado importado com sucesso! ' + tiles.length + ' blocos.');
+            } else {
+                showNotification('❌ Ficheiro inválido: falta a propriedade "tiles".');
             }
+        } catch(err) {
+            showNotification('❌ Erro ao ler o ficheiro: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// ============================================================
+//  VERSÕES
+// ============================================================
+async function saveVersionToDrive(description) {
+    if (tiles.length === 0) {
+        showNotification('❌ O mosaico está vazio.');
+        return;
+    }
+    const versionName = `versao_${new Date().toISOString().replace(/[:.]/g, '-')}`;
+    const versionData = {
+        id: versionName,
+        timestamp: new Date().toISOString(),
+        description: description || 'Sem descrição',
+        tiles: tiles,
+        userName: getUserName()
+    };
+    try {
+        const payload = new URLSearchParams();
+        payload.append('filename', versionName + '.json');
+        payload.append('filetype', 'application/json');
+        payload.append('filedata', btoa(unescape(encodeURIComponent(JSON.stringify(versionData)))));
+        payload.append('folder', 'versoes');
+
+        const response = await fetch(UPLOAD_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: payload.toString()
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const result = await response.json();
+        if (result.success) {
+            showNotification(`✅ Versão "${versionName}" guardada com sucesso!`);
+        } else {
+            throw new Error(result.error || 'Erro ao guardar versão.');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao guardar versão:', error);
+        showNotification(`❌ Erro ao guardar versão: ${error.message}`);
+    }
+}
+
+async function listVersions() {
+    showNotification('📋 Funcionalidade de listagem de versões em desenvolvimento.\nPor agora, use o Google Drive para ver os ficheiros JSON guardados.');
+}
+
+// ============================================================
+//  AGENTES - IMAGENS
+// ============================================================
+function applyAgentImages() {
+    const map = {
+        enheduanna: { img: 'enheduannaImg', placeholder: 'enheduannaPlaceholder' },
+        wanderer: { img: 'wandererImg', placeholder: 'wandererPlaceholder' },
+        ogum: { img: 'ogumImg', placeholder: 'ogumPlaceholder' }
+    };
+    Object.keys(map).forEach(key => {
+        const img = document.getElementById(map[key].img);
+        const ph = document.getElementById(map[key].placeholder);
+        if (agentImages[key]) {
+            img.src = agentImages[key];
+            img.style.display = 'block';
+            ph.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+            ph.style.display = 'block';
+        }
+    });
+}
+
+function setupAgentUpload(agentKey) {
+    const btn = document.querySelector(`.btn-upload-agent[data-agent="${agentKey}"]`);
+    if (!btn) return;
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        fileInput.click();
+    });
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            agentImages[agentKey] = ev.target.result;
+            applyAgentImages();
+            saveToLocalStorage();
         };
-        
-        reader.onerror = function(err) {
-            reject(new Error('Erro ao ler ficheiro: ' + err));
-        };
-        
-        reader.readAsDataURL(fileOrBlob);
+        reader.readAsDataURL(file);
+        fileInput.value = '';
     });
 }
 
@@ -869,10 +927,6 @@ async function uploadToDrive(base64Data, fileName, fileMimeType, type, alias) {
 function generateId() { return Date.now() + '-' + Math.random().toString(36).substr(2, 6); }
 
 function addTile(title='', content='', type='texto', tags=[]) {
-    if (isGuest()) {
-        showNotification('👤 Por favor, escolhe um nome para criar tiles.');
-        return;
-    }
     const tile = {
         id: generateId(),
         title: title.trim() || 'Novo azulejo',
@@ -883,24 +937,16 @@ function addTile(title='', content='', type='texto', tags=[]) {
         files: [],
         messages: [],
         createdBy: getUserName(),
-        createdAt: new Date().toISOString(),
-        origin: { type: 'autoral', createdBy: getUserName() },
-        contributors: [getUserName()],
-        permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
-        history: [{ action: 'create', by: getUserName(), timestamp: new Date().toISOString() }]
+        createdAt: new Date().toISOString()
     };
     tiles.push(tile);
     saveToLocalStorage();
     renderMosaic();
-    logAction('create_tile', tile.id, { title: tile.title, type: tile.type });
+    // Define o novo tile como atual
     setCurrentTile(tile.id);
 }
 
 function duplicateTile(id) {
-    if (isGuest()) {
-        showNotification('👤 Por favor, escolhe um nome para duplicar tiles.');
-        return;
-    }
     const original = tiles.find(t => t.id === id);
     if (!original) return;
     const newTile = {
@@ -910,34 +956,19 @@ function duplicateTile(id) {
         files: original.files ? original.files.map(f => ({ ...f, id: generateId() })) : [],
         messages: [],
         createdBy: getUserName(),
-        createdAt: new Date().toISOString(),
-        origin: { type: 'copia', createdBy: getUserName(), sourceTiles: [original.id] },
-        contributors: [getUserName()],
-        permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
-        history: [{ action: 'copy', by: getUserName(), from: original.id, timestamp: new Date().toISOString() }]
+        createdAt: new Date().toISOString()
     };
     tiles.push(newTile);
     saveToLocalStorage();
     renderMosaic();
-    logAction('copy_tile', newTile.id, { from: original.id });
 }
 
 function deleteTile(id) {
-    if (isGuest()) {
-        showNotification('👤 Por favor, escolhe um nome para eliminar tiles.');
-        return;
-    }
     if (!confirm('Remover este azulejo?')) return;
-    const tile = tiles.find(t => t.id === id);
-    if (!canDeleteTile(id, getUserName())) {
-        showNotification('❌ Não tens permissão para eliminar esta tile.');
-        return;
-    }
     tiles = tiles.filter(t => t.id !== id);
     if (currentTileId === id) currentTileId = null;
     saveToLocalStorage();
     renderMosaic();
-    logAction('delete_tile', id, { title: tile?.title });
 }
 
 function toggleActive(id) {
@@ -946,26 +977,14 @@ function toggleActive(id) {
 }
 
 function editTile(id, newTitle, newContent, newType, newTags) {
-    if (isGuest()) {
-        showNotification('👤 Por favor, escolhe um nome para editar tiles.');
-        return;
-    }
     const tile = tiles.find(t => t.id === id);
     if (!tile) return;
-    if (!canEditTile(id, getUserName())) {
-        showNotification('❌ Não tens permissão para editar esta tile.');
-        return;
-    }
     if (newTitle !== undefined) tile.title = newTitle;
     if (newContent !== undefined) tile.content = newContent;
     if (newType !== undefined) tile.type = newType;
     if (newTags !== undefined) tile.tags = newTags;
-    if (!tile.contributors.includes(getUserName())) {
-        tile.contributors.push(getUserName());
-    }
     saveToLocalStorage();
     renderMosaic();
-    logAction('edit_tile', id, { title: tile.title });
 }
 
 function splitTile(id) {
@@ -988,10 +1007,6 @@ function splitTile(id) {
             messages: [],
             createdBy: getUserName(),
             createdAt: new Date().toISOString(),
-            origin: { type: 'reducao', createdBy: getUserName(), sourceTiles: [original.id] },
-            contributors: [getUserName()],
-            permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
-            history: [{ action: 'split', by: getUserName(), from: original.id, timestamp: new Date().toISOString() }],
             isSplit: true,
             splitFrom: original.id
         };
@@ -999,7 +1014,6 @@ function splitTile(id) {
     });
     saveToLocalStorage();
     renderMosaic();
-    logAction('split_tile', null, { from: original.id, into: tiles.filter(t => t.splitFrom === original.id).map(t => t.id) });
     showNotification(`✅ Tile dividido em ${original.files.length} partes.`);
 }
 
@@ -1014,27 +1028,18 @@ function copyTileWithOverlay(id) {
         messages: [],
         createdBy: getUserName(),
         createdAt: new Date().toISOString(),
-        origin: { type: 'colagem', createdBy: getUserName(), sourceTiles: [original.id] },
-        contributors: [getUserName()],
-        permissions: { canView: { type: 'public' }, canEdit: [getUserName()], canDelete: [getUserName()] },
-        history: [{ action: 'overlay', by: getUserName(), from: original.id, timestamp: new Date().toISOString() }],
         isOverlay: true,
         overlayOf: original.id
     };
     tiles.push(newTile);
     saveToLocalStorage();
     renderMosaic();
-    logAction('overlay_tile', newTile.id, { from: original.id });
 }
 
 // ============================================================
 //  MENSAGENS
 // ============================================================
 function addMessageToTile(id, message) {
-    if (isGuest()) {
-        showNotification('👤 Por favor, escolhe um nome para comentar.');
-        return;
-    }
     const tile = tiles.find(t => t.id === id);
     if (!tile) return;
     if (!tile.messages) tile.messages = [];
@@ -1046,7 +1051,6 @@ function addMessageToTile(id, message) {
     });
     saveToLocalStorage();
     renderMosaic();
-    logAction('add_message', id, { message: message });
 }
 
 function deleteMessageFromTile(tileId, msgId) {
@@ -1080,12 +1084,13 @@ function expandText(id) {
 }
 
 // ============================================================
-//  POEMÁRIO
+//  POEMÁRIO (tile central)
 // ============================================================
 function openPoemario() {
     const modal = document.createElement('div');
     modal.className = 'modal-bg';
     modal.style.background = 'rgba(0,0,0,0.9)';
+    
     const palavras = [
         ['bem-vindo', 'bem-vinda', 'acolhido', 'acolhida'],
         ['Elsinore', 'Alhambra', 'Cascais', 'Berlim'],
@@ -1093,6 +1098,7 @@ function openPoemario() {
         ['poema', 'mosaico', 'teia', 'fragmento'],
         ['luz', 'sombra', 'eco', 'silêncio']
     ];
+    
     function gerarPoema() {
         const p1 = palavras[0][Math.floor(Math.random() * palavras[0].length)];
         const p2 = palavras[1][Math.floor(Math.random() * palavras[1].length)];
@@ -1101,7 +1107,9 @@ function openPoemario() {
         const p5 = palavras[4][Math.floor(Math.random() * palavras[4].length)];
         return `${p1} em ${p2},\n${p3} tece um ${p4} de ${p5}.`;
     }
+    
     let poemaAtual = gerarPoema();
+    
     modal.innerHTML = `
         <div class="modal-card" style="max-width:500px; text-align:center; background: rgba(26,22,18,0.95); border: 2px solid #d4af6a; border-radius: 20px; padding: 2rem; position: relative;">
             <button id="fecharPoemario" style="position:absolute;top:10px;right:15px;background:transparent;border:none;color:#f0ece3;font-size:1.5rem;cursor:pointer;">✕</button>
@@ -1127,14 +1135,18 @@ function openPoemario() {
             </div>
         </div>
     `;
+    
     document.body.appendChild(modal);
+    
     modal.querySelector('#fecharPoemario').addEventListener('click', () => modal.remove());
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    
     modal.querySelector('#gerarNovoPoema').addEventListener('click', function() {
         poemaAtual = gerarPoema();
         const contentDiv = modal.querySelector('.modal-card div:nth-child(4)');
         contentDiv.textContent = poemaAtual;
     });
+    
     modal.querySelector('#guardarPoema').addEventListener('click', function() {
         const tile = tiles.find(t => t.isCentral === true);
         if (tile) {
@@ -1148,7 +1160,7 @@ function openPoemario() {
 }
 
 // ============================================================
-//  AGENTES - AÇÕES
+//  AGENTES - AÇÕES (com lógica de currentTile)
 // ============================================================
 function generateSuggestions(tile) {
     const tags = tile.tags || [];
@@ -1189,13 +1201,16 @@ function renderMosaic() {
         div.className = `tile tipo-${tile.type}`;
         if (tile.active === false) div.classList.add('inactive');
         if (tile.isOverlay) div.classList.add('is-overlay');
-        if (tile.isCentral) div.classList.add('tipo-poemario', 'central');
+        if (tile.isCentral) div.classList.add('tipo-poemario');
         div.dataset.id = tile.id;
 
         const tagsHtml = (tile.tags||[]).map(t => `<span>#${t}</span>`).join('');
 
         let contentHtml = '';
 
+        // ============================================================
+        //  TILE DO TIPO "POEMÁRIO"
+        // ============================================================
         if (tile.type === 'poemario') {
             contentHtml = `
                 <div style="text-align:center; padding:0.5rem; border:2px solid #d4af6a; border-radius:12px; background:rgba(212,175,106,0.05);">
@@ -1211,7 +1226,11 @@ function renderMosaic() {
                     </div>
                 </div>
             `;
-        } else if (tile.type === 'link' && tile.linkUrl) {
+        }
+        // ============================================================
+        //  TILE DO TIPO "LINK"
+        // ============================================================
+        else if (tile.type === 'link' && tile.linkUrl) {
             let previewImage = '';
             if (tile.linkImage) {
                 previewImage = `<img src="${tile.linkImage}" alt="${escapeHtml(tile.linkTitle)}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:0.5rem;">`;
@@ -1229,29 +1248,27 @@ function renderMosaic() {
                     </div>
                 </div>
             `;
-        } else if (tile.files && tile.files.length > 0) {
+        }
+        // ============================================================
+        //  MÚLTIPLOS ARQUIVOS (files: [])
+        // ============================================================
+        else if (tile.files && tile.files.length > 0) {
             let filesHtml = '<div style="margin-top:0.5rem;">';
             tile.files.forEach(file => {
                 const icon = getFileIcon(file.type);
                 const fileId = file.fileId || file.url.split('id=')[1]?.split('&')[0];
+                
                 if (file.type === 'image') {
                     const imageUrl = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w800` : file.url;
                     filesHtml += `<div style="margin:0.2rem 0;"><img src="${imageUrl}" alt="${escapeHtml(file.name)}" style="max-width:100%;border-radius:8px;max-height:200px;"></div>`;
                 } else if (file.type === 'audio') {
-                    const audioUrl = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : file.url;
+                    const audioUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : file.url;
                     filesHtml += `<div style="margin:0.2rem 0;"><audio controls src="${audioUrl}" style="width:100%;"></audio></div>`;
                 } else if (file.type === 'video') {
-                    const videoUrl = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : file.url;
+                    const videoUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : file.url;
                     filesHtml += `<div style="margin:0.2rem 0;"><video controls src="${videoUrl}" style="max-width:100%;border-radius:8px;"></video></div>`;
                 } else if (file.type === 'link') {
                     filesHtml += `<div style="margin:0.2rem 0;"><a href="${file.url}" target="_blank" style="color:#d4af6a;text-decoration:underline;">🔗 ${escapeHtml(file.name)}</a></div>`;
-                } else if (file.type === 'pdf') {
-                    const pdfUrl = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : file.url;
-                    filesHtml += `<div style="margin:0.2rem 0;" class="pdf-preview" data-id="${tile.id}">`;
-                    filesHtml += `<span style="font-size:1.5rem;">📄</span>`;
-                    filesHtml += `<span style="font-size:0.8rem;margin-left:0.5rem;">${escapeHtml(file.name)}</span>`;
-                    filesHtml += `<span style="font-size:0.6rem;opacity:0.5;margin-left:0.5rem;">(clique para abrir)</span>`;
-                    filesHtml += `</div>`;
                 } else {
                     filesHtml += `<div style="margin:0.2rem 0;display:flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.05);padding:0.3rem 0.6rem;border-radius:8px;">`;
                     filesHtml += `<span style="font-size:1.2rem;">${icon}</span>`;
@@ -1263,7 +1280,11 @@ function renderMosaic() {
             });
             filesHtml += '</div>';
             contentHtml = filesHtml;
-        } else {
+        }
+        // ============================================================
+        //  TEXTO (conteúdo normal)
+        // ============================================================
+        else {
             contentHtml = escapeHtml(tile.content).replace(/\n/g, '<br>');
             if (tile.content && tile.content.length > 200) {
                 contentHtml += `<button class="btn-expand-text" data-id="${tile.id}">📖 Expandir</button>`;
@@ -1308,7 +1329,10 @@ function renderMosaic() {
         container.appendChild(div);
     });
 
-    // Eventos
+    // ============================================================
+    //  EVENTOS
+    // ============================================================
+    // Clique na tile para definir como atual
     document.querySelectorAll('.tile').forEach(el => {
         el.addEventListener('click', function(e) {
             if (e.target.closest('button')) return;
@@ -1316,10 +1340,6 @@ function renderMosaic() {
             const tile = tiles.find(t => t.id === tileId);
             if (tile && tile.type === 'poemario') {
                 openPoemario();
-                return;
-            }
-            if (!canViewTile(tileId, getUserName())) {
-                showNotification('🔒 Não tens permissão para ver este tile.');
                 return;
             }
             setCurrentTile(tileId);
@@ -1342,6 +1362,14 @@ function renderMosaic() {
         e.stopPropagation();
         toggleActive(this.dataset.id);
     }));
+    document.querySelectorAll('.btn-copy-overlay').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        copyTileWithOverlay(this.dataset.id);
+    }));
+    document.querySelectorAll('.btn-split').forEach(b => b.addEventListener('click', function(e) {
+        e.stopPropagation();
+        splitTile(this.dataset.id);
+    }));
     document.querySelectorAll('.btn-upload').forEach(b => b.addEventListener('click', function(e) {
         e.stopPropagation();
         const id = this.dataset.id;
@@ -1351,10 +1379,7 @@ function renderMosaic() {
         input.click();
         input.onchange = async function() {
             if (this.files && this.files[0]) {
-                const file = this.files[0];
-                const fileType = getFileTypeFromMime(file.type);
-                const alias = getUserName();
-                await uploadToDrive(file, fileType, alias);
+                await uploadToDrive(this.files[0], id);
             }
             this.value = '';
         };
@@ -1364,6 +1389,7 @@ function renderMosaic() {
         const id = this.dataset.id;
         const inp = this.parentElement.querySelector('.msg-input');
         if (inp && inp.value.trim()) {
+            const userName = getUserName();
             addMessageToTile(id, inp.value.trim());
             inp.value = '';
         }
@@ -1397,30 +1423,8 @@ function renderMosaic() {
             showNotification('🗑️ Ficheiro removido.');
         }
     }));
-    document.querySelectorAll('.pdf-preview').forEach(el => {
-        el.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const tileId = this.dataset.id;
-            const tile = tiles.find(t => t.id === tileId);
-            if (tile && tile.files) {
-                const pdfFile = tile.files.find(f => f.type === 'pdf');
-                if (pdfFile) {
-                    const url = pdfFile.fileId ? `https://drive.google.com/uc?export=view&id=${pdfFile.fileId}` : pdfFile.url;
-                    window.open(url, '_blank');
-                    return;
-                }
-            }
-            if (tile && tile.fileUrl) {
-                window.open(tile.fileUrl, '_blank');
-            } else if (tile && tile.fileId) {
-                const url = `https://drive.google.com/uc?export=view&id=${tile.fileId}`;
-                window.open(url, '_blank');
-            } else {
-                showNotification('❌ PDF não encontrado.');
-            }
-        });
-    });
 
+    // Restaura o tile atual (se existir)
     if (currentTileId) {
         const tileEl = document.querySelector(`.tile[data-id="${currentTileId}"]`);
         if (tileEl) tileEl.classList.add('current');
@@ -1442,10 +1446,6 @@ function renderMosaic() {
 function openEditModal(id) {
     const tile = tiles.find(t => t.id === id);
     if (!tile) return;
-    if (!canEditTile(id, getUserName())) {
-        showNotification('❌ Não tens permissão para editar esta tile.');
-        return;
-    }
     const modal = document.createElement('div');
     modal.className = 'modal-bg';
     modal.innerHTML = `
@@ -1475,6 +1475,7 @@ function openEditModal(id) {
     `;
     document.body.appendChild(modal);
 
+    // Mostrar/esconder campos de link
     const typeSelect = modal.querySelector('#editType');
     const linkFields = modal.querySelector('#linkFields');
     typeSelect.addEventListener('change', function() {
@@ -1488,12 +1489,14 @@ function openEditModal(id) {
         const nc = modal.querySelector('#editContent').value;
         const nt2 = modal.querySelector('#editType').value;
         const ntags = modal.querySelector('#editTags').value.split(',').map(s => s.trim()).filter(Boolean);
+        
         const tile = tiles.find(t => t.id === id);
         if (tile && nt2 === 'link') {
             tile.linkUrl = modal.querySelector('#editLinkUrl').value;
             tile.linkTitle = modal.querySelector('#editLinkTitle').value;
             tile.linkDescription = modal.querySelector('#editLinkDescription').value;
         }
+        
         editTile(id, nt, nc, nt2, ntags);
         modal.remove();
     });
@@ -1518,7 +1521,7 @@ function newMosaic() {
         localStorage.setItem('enheduanna_mosaic_backup', JSON.stringify(tiles));
         localStorage.setItem('enheduanna_agents_backup', JSON.stringify(agentImages));
     }
-    tiles = JSON.parse(JSON.stringify(INITIAL_TILES));
+    tiles = [];
     currentTileId = null;
     saveToLocalStorage();
     renderMosaic();
@@ -1577,150 +1580,9 @@ function fallbackCopy(text) {
 }
 
 // ============================================================
-//  AGENTES - IMAGENS
-// ============================================================
-function applyAgentImages() {
-    const map = {
-        enheduanna: { img: 'enheduannaImg', placeholder: 'enheduannaPlaceholder' },
-        wanderer: { img: 'wandererImg', placeholder: 'wandererPlaceholder' },
-        ogum: { img: 'ogumImg', placeholder: 'ogumPlaceholder' }
-    };
-    Object.keys(map).forEach(key => {
-        const img = document.getElementById(map[key].img);
-        const ph = document.getElementById(map[key].placeholder);
-        if (agentImages[key]) {
-            img.src = agentImages[key];
-            img.style.display = 'block';
-            ph.style.display = 'none';
-        } else {
-            img.style.display = 'none';
-            ph.style.display = 'block';
-        }
-    });
-}
-
-function setupAgentUpload(agentKey) {
-    const btn = document.querySelector(`.btn-upload-agent[data-agent="${agentKey}"]`);
-    if (!btn) return;
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.style.display = 'none';
-    document.body.appendChild(fileInput);
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        fileInput.click();
-    });
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            agentImages[agentKey] = ev.target.result;
-            applyAgentImages();
-            saveToLocalStorage();
-        };
-        reader.readAsDataURL(file);
-        fileInput.value = '';
-    });
-}
-
-// ============================================================
-//  EXPORTAR E IMPORTAR JSON
-// ============================================================
-async function exportEstado() {
-    if (tiles.length === 0) {
-        showNotification('❌ O mosaico está vazio.');
-        return;
-    }
-    const data = { tiles, exportedAt: new Date().toISOString() };
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-    await uploadToDrive(blob, 'version', getUserName());
-    
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `enheduanna_${new Date().toISOString().slice(0,10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-function importEstado(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            if (data.tiles && Array.isArray(data.tiles)) {
-                tiles = data.tiles;
-                tiles.forEach(t => { if (!t.messages) t.messages = []; if (!t.files) t.files = []; });
-                saveToLocalStorage();
-                renderMosaic();
-                showNotification('✅ Estado importado com sucesso! ' + tiles.length + ' blocos.');
-            } else {
-                showNotification('❌ Ficheiro inválido: falta a propriedade "tiles".');
-            }
-        } catch(err) {
-            showNotification('❌ Erro ao ler o ficheiro: ' + err.message);
-        }
-    };
-    reader.readAsText(file);
-}
-
-// ============================================================
-//  VERSÕES
-// ============================================================
-async function saveVersionToDrive(description) {
-    if (tiles.length === 0) {
-        showNotification('❌ O mosaico está vazio.');
-        return;
-    }
-    const versionName = `versao_${new Date().toISOString().replace(/[:.]/g, '-')}`;
-    const versionData = {
-        id: versionName,
-        timestamp: new Date().toISOString(),
-        description: description || 'Sem descrição',
-        tiles: tiles,
-        userName: getUserName()
-    };
-    try {
-        const payload = new URLSearchParams();
-        payload.append('filename', versionName + '.json');
-        payload.append('filetype', 'application/json');
-        payload.append('filedata', btoa(unescape(encodeURIComponent(JSON.stringify(versionData)))));
-        payload.append('folder', 'mosaico/filhos/versoes/active');
-        const response = await fetch(UPLOAD_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: payload.toString()
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const result = await response.json();
-        if (result.success) {
-            showNotification(`✅ Versão "${versionName}" guardada com sucesso!`);
-            logAction('save_version', null, { versionName: versionName });
-        } else {
-            throw new Error(result.error || 'Erro ao guardar versão.');
-        }
-    } catch (error) {
-        console.error('❌ Erro ao guardar versão:', error);
-        showNotification(`❌ Erro ao guardar versão: ${error.message}`);
-    }
-}
-
-async function listVersions() {
-    showNotification('📋 Funcionalidade de listagem de versões em desenvolvimento.\nPor agora, use o Google Drive para ver os ficheiros JSON guardados.');
-}
-
-// ============================================================
 //  INICIALIZAÇÃO
 // ============================================================
 function init() {
-    // Mostrar dropdown de utilizadores primeiro
-    showUserDropdown();
-    
-    // Carregar mosaico
     loadMosaic();
     renderMosaic();
     setupAgentUpload('enheduanna');
@@ -1760,19 +1622,6 @@ function init() {
             fallbackCopy(jsonStr);
         }
     });
-    document.getElementById('btnMerge').addEventListener('click', function() {
-        const selected = prompt('IDs dos tiles para fundir (separados por vírgula):');
-        if (selected) {
-            const ids = selected.split(',').map(id => id.trim());
-            mergeTiles(ids);
-        }
-    });
-    document.getElementById('btnActivateTile').addEventListener('click', function() {
-        const tileId = prompt('ID da tile a ativar:');
-        if (tileId) {
-            activateTile(tileId.trim());
-        }
-    });
 
     document.querySelectorAll('.mode-btn').forEach(b => {
         b.addEventListener('click', function() {
@@ -1782,14 +1631,11 @@ function init() {
     });
 
     // ============================================================
-    //  ENHEDUANNA
+    //  ENHEDUANNA (com lógica de currentTile)
     // ============================================================
     document.getElementById('enheduannaAvatar').addEventListener('click', function() {
-        if (isGuest()) {
-            showNotification('👤 Por favor, escolhe um nome para interagir com a Enheduanna.');
-            return;
-        }
         const currentTile = getCurrentTile();
+        
         if (!currentTile) {
             const resposta = prompt(
                 '📜 Enheduanna: "Onde vamos, andarilha?"\n\n' +
@@ -1819,6 +1665,7 @@ function init() {
             }
             return;
         }
+        
         const sug = generateSuggestions(currentTile);
         document.getElementById('suggestionText').textContent = `💡 ${sug}`;
         document.getElementById('enheduannaStatus').textContent = `a tecer sobre "${currentTile.title}"`;
@@ -1827,14 +1674,11 @@ function init() {
     });
 
     // ============================================================
-    //  WANDERER
+    //  WANDERER (com lógica de currentTile)
     // ============================================================
     document.getElementById('wandererAvatar').addEventListener('click', function() {
-        if (isGuest()) {
-            showNotification('👤 Por favor, escolhe um nome para interagir com o Wanderer.');
-            return;
-        }
         const currentTile = getCurrentTile();
+        
         if (!currentTile) {
             const resposta = prompt(
                 '🚶 Wanderer: "Por onde queres caminhar?"\n\n' +
@@ -1879,6 +1723,7 @@ function init() {
             }
             return;
         }
+        
         highlightTile(currentTile.id);
         document.getElementById('wandererStatus').textContent = `percorrendo: "${currentTile.title}"`;
         addMessageToTile(currentTile.id, '🚶 Wanderer passou por aqui.');
@@ -1886,14 +1731,11 @@ function init() {
     });
 
     // ============================================================
-    //  OGUM
+    //  OGUM (com lógica de currentTile)
     // ============================================================
     document.getElementById('ogumAvatar').addEventListener('click', function() {
-        if (isGuest()) {
-            showNotification('👤 Por favor, escolhe um nome para interagir com o Ogum.');
-            return;
-        }
         const currentTile = getCurrentTile();
+        
         if (!currentTile) {
             const resposta = prompt(
                 '⚔️ Ogum: "O que queres inventar?"\n\n' +
@@ -1927,6 +1769,7 @@ function init() {
             }
             return;
         }
+        
         const result = prompt(`⚔️ Ogum (Inventor)
 
 Ferramentas sugeridas para "${currentTile.title}":
@@ -1936,6 +1779,7 @@ Ferramentas sugeridas para "${currentTile.title}":
 • 🎵 Gerar música (Udio)
 
 O que desejas fazer?`);
+        
         if (result && result.trim()) {
             addMessageToTile(currentTile.id, `⚔️ Ogum: ${result.trim()}`);
             renderMosaic();
@@ -1958,14 +1802,18 @@ O que desejas fazer?`);
     let si = 0;
     setInterval(() => {
         const el = document.getElementById('suggestionText');
-        if (el) {
-            si = (si + 1) % sugestoes.length;
+        if (el) { 
+            si = (si + 1) % sugestoes.length; 
+            // Só muda se não houver uma sugestão da Enheduanna ativa
             if (!document.getElementById('enheduannaStatus').textContent.includes('a tecer')) {
                 el.textContent = sugestoes[si];
             }
         }
     }, 7000);
 
+    // ============================================================
+    //  ATUALIZAR INTERFACE DO UTILIZADOR
+    // ============================================================
     const userName = getUserName();
     const userDisplay = document.createElement('div');
     userDisplay.style.cssText = 'font-size:0.7rem;color:#d4af6a;margin-left:1rem;opacity:0.7;';
